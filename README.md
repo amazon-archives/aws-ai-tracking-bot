@@ -12,7 +12,7 @@ to give more funds to charity, to donate more articles to charity, to participat
 events, etc. 
 
 There are four main components in this application: LexAppBuilder, LexWebUi 
-(in the submodules folder), dashboard-app, and an Android App contained in the
+(in the aws-lex-web-ui folder), dashboard-app, and an Android App contained in the
 TrackingBot-aws-my-sample-app-android folder. 
 
 ## LexAppBuilder

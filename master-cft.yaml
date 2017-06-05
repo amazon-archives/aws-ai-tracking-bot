@@ -10,7 +10,7 @@ Parameters:
 
   GitHubRepo:
     Type: String
-    Default: tracking-bot
+    Default: aws-ai-tracking-bot
     Description: The repo name of the sample service
 
   GitHubRepoOwner:
@@ -427,7 +427,7 @@ Resources:
                                 - sed -i 's%https://github.com%https://${GitHubRepoOwner}:${GitHubToken}@github.com%g' .gitmodules
                                 - git submodule init
                                 - git submodule update
-                                - cd submodules/aws-lex-web-ui && make install-deps
+                                - cd aws-lex-web-ui && make install-deps
                                 - cd dashboard-app && make install-deps
                                 - cd LexAppBuilder && npm install
                                 - npm install

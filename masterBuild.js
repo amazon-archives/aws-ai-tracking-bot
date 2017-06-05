@@ -129,7 +129,7 @@ copyFile(model,"dashboard-app/dashboard-app/src/assets/TrackingBotModel.json")
 
 function makeLexWebUi(cp) {
   return new Promise(function (resolve, reject) {
-    process.chdir('submodules/aws-lex-web-ui');
+    process.chdir('aws-lex-web-ui');
     let out = cp.spawnSync('make', ['build']);
     console.log("stdout");
     console.log(out.stdout.toString("utf8"));
