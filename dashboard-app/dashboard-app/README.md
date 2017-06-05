@@ -1,13 +1,13 @@
 # dashboard-app
 
 This project demonstrates a POC dashboard for a personal tracking system. A common model, TrackingBotModel.json, is
-shared with both the LexAppBuilder and the lex-web-ui.
+shared with both the LexAppBuilder and the aws-lex-web-ui.
 
 The LexAppBuilder generates a Lex Bot and associated resources: DynamoDB tables, roles, lambda functions, etc.
 
-The lex-web-ui provides a browser based interface (voice and text) for this Bot and lives in an s3 bucket.
+The aws-lex-web-ui provides a browser based interface (voice and text) for this Bot and lives in an s3 bucket.
 
-The dashboard-app provides a sample dashboard which makes use of the IFrame capability in the lex-web-ui.
+The dashboard-app provides a sample dashboard which makes use of the IFrame capability in the aws-lex-web-ui.
 
 The contents of TrackingBotModel.json at src/assets/TrackingBotModel.json defines the model used by this
 dashboard app and the model injected into Lex using the LexAppBuilder.

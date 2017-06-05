@@ -200,9 +200,9 @@ the other two must be set at "0".
       },
 
 ```
-The model also allows several ui elements to be defined which drive the lex-web-ui.
-* titleBar - the text to use in the lex-web-ui IFrame
-* initialText - the text initially displayed in the lex-web-ui IFrame
+The model also allows several ui elements to be defined which drive the aws-lex-web-ui.
+* titleBar - the text to use in the aws-lex-web-ui IFrame
+* initialText - the text initially displayed in the aws-lex-web-ui IFrame
 * initialSpeechInstruction - the text communicated via Polly whenever the microphone button is clicked
 
 ```

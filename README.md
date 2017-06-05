@@ -62,9 +62,9 @@ two actions is created.
 
 The first action calls masterBuild.js. This nodejs based script performs the following:
 
-* builds the lex-web-ui and stores this in an S3 bucket
+* builds the aws-lex-web-ui and stores this in an S3 bucket
 * builds the dashboard-app and stores this in a separate S3 bucket. The dashboard-app 
-integrates the lex-web-ui as an IFrame.
+integrates the aws-lex-web-ui as an IFrame.
 * builds the LexAppBuilder which creates a stack based on the supplied model. This stack 
 includes setting up DynamoDB tables and setting up the Lex Bot using custom
 resources implemented to build Lex runtime components. 
