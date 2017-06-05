@@ -146,7 +146,7 @@ function makeLexWebUi(cp) {
     if (out.status !== 0) {
       reject(out.error);
     }
-    process.chdir('../..');
+    process.chdir('..');
     resolve();
   });
 }
