@@ -1,0 +1,328 @@
+{
+  "bot": {
+    "name": "Resolutions",
+    "description": "Defines Lex Bot for tracking New Years Resolutions",
+    "clarificationPrompt": "Sorry, can you please repeat that?",
+    "abortStatement": "Sorry, I could not understand. Goodbye.",
+    "allowUserToClearMetrics": "true",
+    "categories": [
+      {
+        "name": "Volunteer",
+        "description": "Tracks how many hours you volunteer",
+        "verb": {
+          "prefix": ["I", "We"],
+          "type": "custom",
+          "values": [
+              "spent",
+              "volunteered",
+              "coached",
+              "taught",
+              "sold",
+              "mentored",
+              "performed"
+            ],
+          "prompt": "How did you volunteer. Taught, coached, mentored?"
+        },
+        "qty": {
+          "prefix": ["for"],
+          "type": "AMAZON.DURATION",
+          "convertTo": "MINUTES",
+          "prompt": "How long did you spend on this activity?",
+          "default": "NA"
+        },
+        "units": {
+          "type": "custom",
+          "values": [],
+          "default": "NA",
+          "prompt": "NA"
+        },
+        "object": {
+          "prefix": [
+            "the",
+            "coaching the",
+            "mentoring the",
+            "teaching the",
+            "volunteering at the",
+            "performing at the",
+            "at the",
+            "with",
+            "with the"
+          ],
+          "type": "custom",
+          "values": [
+            "football team",
+            "soccer team",
+            "robotics club",
+            "debating society",
+            "drama club",
+            "school",
+            "church",
+            "club"
+          ],
+          "default": "not specified",
+          "prompt": "For whom did you volunteer?"
+        },
+        "date": {
+          "type": "AMAZON.DATE",
+          "default": "TODAY",
+          "prompt": "When did you do this?"
+        },
+        "confirmation": "Thanks. I will record that {date} you spent {qty} minutes of time volunteering. Ok?",
+        "cancel": "Sorry, please try again.",
+        "dailyTarget": "0",
+        "weeklyTarget": "60",
+        "monthlyTarget": "0"
+      },
+      {
+        "name": "Meet",
+        "description": "Tracks how many community meetings you attend",
+        "verb": {
+          "prefix": ["I", "We"],
+          "type": "custom",
+          "values": [
+            "met",
+            "went to",
+            "attended a meeting"
+          ],
+          "prompt": "What did you do?"
+        },
+        "qty": {
+          "prefix": [],
+          "type": "AMAZON.NUMBER",
+          "convertTo": "NA",
+          "default": "1",
+          "prompt": "How many meetings did you attend?"
+        },
+        "units": {
+          "type": "custom",
+          "values": [],
+          "default": "NA",
+          "prompt": "NA"
+        },
+        "object": {
+          "prefix": [
+            "meeting with the",
+            "with the",
+            "at the"
+          ],
+          "type": "custom",
+          "values": [
+            "town hall",
+            "home owners association",
+            "community association",
+            "board",
+            "non-profit",
+            "organization",
+            "group",
+            "society",
+            "congress",
+            "president",
+            "committee"
+          ],
+          "default": "not specified",
+          "prompt": "With whom did you meet?"
+        },
+        "date": {
+          "type": "AMAZON.DATE",
+          "default": "TODAY",
+          "prompt": "When did you perform this?"
+        },
+        "confirmation": "I will record that {date} you attended {qty} meetings. Ok?",
+        "cancel": "Sorry, please try again.",
+        "dailyTarget": "0",
+        "weeklyTarget": "1",
+        "monthlyTarget": "0"
+      },
+      {
+        "name": "Articles",
+        "description": "Tracks the number of articles given to charity",
+        "verb": {
+          "prefix": ["I", "We"],
+          "type": "custom",
+          "values": [
+            "donated",
+            "gave",
+            "gave away",
+            "dropped off",
+            "contributed"
+          ],
+          "prompt": "What did you do?"
+        },
+        "qty": {
+          "prefix": [],
+          "type": "AMAZON.NUMBER",
+          "prompt": "What quantity did you give?",
+          "default": "NA"
+        },
+        "units": {
+          "type": "custom",
+          "values": [
+            "items",
+            "individual",
+            "sets",
+            "bundles",
+            "pairs",
+            "bags",
+            "box",
+            "boxes",
+            "boxes of books",
+            "boxes of food",
+            "item donations",
+            "cans of food",
+            "bags of clothing",
+            "pairs of shoes",
+            "books",
+            "book",
+            "carton",
+            "pair",
+            "cartons"
+          ],
+          "prompt": "Was this in boxes, bags, bundles, pairs, cartons, items?"
+        },
+        "object": {
+          "prefix": ["to", "to the", "a", "to a"],
+          "type": "custom",
+          "values": [
+            "charity",
+            "veterans association",
+            "shelter",
+            "good samaritan"
+          ],
+          "default": "not specified",
+          "prompt": "Who did you donate to?"
+        },
+        "date": {
+          "type": "AMAZON.DATE",
+          "default": "TODAY",
+          "prompt": "When did you donate?"
+        },
+        "confirmation": "I will record that {date} you gave {qty} {units} to {object}. Ok?",
+        "cancel": "Sorry, please try again.",
+        "dailyTarget": "0",
+        "weeklyTarget": "0",
+        "monthlyTarget": "4"
+      },
+      {
+        "name": "Money",
+        "description": "Tracks how much money you have given",
+        "verb": {
+          "prefix": ["I", "We"],
+          "type": "custom",
+          "values": [
+            "gave", "donated", "contributed"
+          ],
+          "prompt": "Say gave to indicate you gave funds."
+        },
+        "qty": {
+          "prefix": [],
+          "type": "AMAZON.NUMBER",
+          "prompt": "How much did you provide?",
+          "default": "NA"
+        },
+        "units": {
+          "type": "custom",
+          "values": [
+            "dollars",
+            "pesos",
+            "euros",
+            "rupees"
+          ],
+          "prompt": "What currency - dollars, pesos, euros, or rupees?"
+        },
+        "object": {
+          "prefix": ["to", "to the", "a", "to a"],
+          "type": "custom",
+          "values": [
+            "charity",
+            "non-profit",
+            "university",
+            "hospital",
+            "heart association",
+            "cancer center",
+            "church",
+            "club",
+            "school"
+          ],
+          "default": "not specified",
+          "prompt": "Who did you give to?"
+        },
+        "date": {
+          "type": "AMAZON.DATE",
+          "default": "TODAY",
+          "prompt": "When did you give?"
+        },
+        "confirmation": "I will record that {date} you gave {qty} {units} in funds. Ok?",
+        "cancel": "Sorry, please try again.",
+        "dailyTarget": "10",
+        "weeklyTarget": "0",
+        "monthlyTarget": "0"
+      },
+      {
+        "name": "Events",
+        "description": "Tracks the number of days you participate in an event",
+        "verb": {
+          "prefix": ["I", "We"],
+          "type": "custom",
+          "values": [
+            "participated",
+            "ran",
+            "biked",
+            "walked",
+            "stood",
+            "jogged",
+            "went to",
+            "attended"
+          ],
+          "prompt": "What did you do?"
+        },
+        "qty": {
+          "prefix": ["in"],
+          "type": "AMAZON.NUMBER",
+          "prompt": "How many days did you participate?",
+          "default": "1"
+        },
+        "units": {
+          "type": "custom",
+          "values": [],
+          "default": "NA",
+          "prompt": "NA"
+        },
+        "object": {
+          "prefix": ["the", "a"],
+          "type": "custom",
+          "values": [
+            "ball",
+            "charity ball",
+            "church car wash",
+            "luncheon",
+            "society luncheon",
+            "cancer walk",
+            "heart walk",
+            "ALS walk",
+            "fundraiser",
+            "pancake breakfast",
+            "car wash",
+            "a-thon"
+          ],
+          "default": "not specified",
+          "prompt": "What was the activity?"
+        },
+        "date": {
+          "type": "AMAZON.DATE",
+          "default": "TODAY",
+          "prompt": "When did you participate?"
+        },
+        "confirmation": "I will record that you participated {qty} day at the {object} on {date}. Ok?",
+        "cancel": "Sorry, please try again.",
+        "dailyTarget": "0",
+        "weeklyTarget": "0",
+        "monthlyTarget": "3"
+      }
+    ],
+    "ui": {
+      "titleBar": "Resolutions",
+      "initialText": "You can ask me to record your Resolution activities. For example enter, `I gave 3 pairs of shoes to charity today` or `Yesterday I walked at the heart walk`.",
+      "initialSpeechInstruction": "Say phrases like `I gave 20 dollars to charity today`."
+    }
+  }
+}

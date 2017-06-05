@@ -1,0 +1,18 @@
+{
+  "iframeOrigin": "TBD",
+  "aws": {
+    "cognitoPoolId": "us-east-1:53ea48f1-3b0a-4aad-82dd-3ced2744a854",
+    "region": "us-east-1",
+    "botName": "Resolutions"
+  },
+  "iframeConfig": {
+    "lex": {
+      "initialText": "TBD",
+      "initialSpeechInstruction": "TBD"
+    },
+    "ui": {
+      "toolbarTitle": "TBD",
+      "pushInitialTextOnRestart": false
+    }
+  }
+}

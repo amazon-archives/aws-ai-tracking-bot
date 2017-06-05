@@ -1,0 +1,59 @@
+<resources>
+
+
+  <string name="app_name">TrackingBot</string>
+
+  <string name="main_nav_menu_item_home">Home</string>
+  <string name="title_activity_item_detail">Item Detail</string>
+  <string name="title_activity_item_list">Item List</string>
+  <string name="title_activity_main">@string/app_name</string>
+  <string name="button_text_sign_in">SIGN IN</string>
+  <string name="button_text_sign_out">SIGN OUT</string>
+
+  <string name="fragment_demo_instruction_overview_header">Overview</string>
+  <string name="fragment_demo_instruction_description_header">Sample App Features</string>
+
+  <string name="main_fragment_title_your_history">Dashboard</string>
+  <string name="main_fragment_subtitle_your_history">Metric Dashboard</string>
+  <string name="feature_your_history_title">Dashboard</string>
+  <string name="feature_your_history_subtitle">View your metrics in a friendly dashboard.</string>
+  <string name="feature_your_history_overview">Dashboard providing results per last day, last week, and last 30 days.</string>
+  <string name="feature_your_history_description">Dashboard showing results per metric.</string>
+  <string name="feature_your_history_powered_by">Powered by Amazon Web Services</string>
+  <string name="feature_your_history_button">Dashboard</string>
+
+  <string name="feature_sign_in_title">User Sign-in</string>
+  <string name="feature_sign_in_subtitle">Let your users sign in with public identity providers or your own identity system.</string>
+  <string name="feature_sign_in_overview">Whether your users sign in or not, the User sign-in feature configures Amazon Cognito to uniquely identify the user and provide your app the appropriate credentials to access your AWS resources.</string>
+  <string name="feature_sign_in_description">The Sample App demonstrates assignment of a unique identifier for the user, the Amazon Cognito User ID. If optional or mandatory User Sign-in has been enabled in your project, then the Sample App also includes a sign-in screen, with a button for each configured sign-in provider.</string>
+  <string name="feature_sign_in_powered_by">Powered by Amazon Cognito</string>
+  <string name="feature_sign_in_demo_button">Demo User Identity</string>
+
+  <string name="main_fragment_title_user_identity">User Identity</string>
+  <string name="main_fragment_subtitle_user_identity">Keep track of users</string>
+  <string name="identity_demo_text_view_description">Displays the user identity.</string>
+  <string name="unknown_user">Guest User</string>
+  <string name="user_id">USER IDENTIFIER</string>
+  <string name="identity_demo_textview_username_description">User\'s name</string>
+  <string name="identity_demo_textview_userid_description">User\'s unique identifier</string>
+  <string name="identity_demo_unknown_identity_text">&lt;UNKNOWN IDENTITY&gt;</string>
+  <string name="identity_demo_dialog_dismiss_text">DISMISS</string>
+  <string name="identity_demo_error_dialog_title">Failed Identity Retrieval</string>
+  <string name="identity_demo_error_message_failed_get_identity">Could not retrieve the user identity:\u0020</string>
+
+  <string name="feature_app_conversational_bots_title">Record</string>
+  <string name="feature_app_conversational_bots_subtitle">Use voice input or a text based chat tool to log your information.</string>
+  <string name="feature_app_conversational_bots_overview"></string>
+  <string name="feature_app_conversational_bots_description"> </string>
+  <string name="feature_app_conversational_bots_powered_by">Powered by Amazon Lex</string>
+  <string name="feature_app_conversational_bots_voice_title">Voice Input</string>
+  <string name="feature_app_conversational_bots_text_title">Text Input</string>
+  <string name="feature_app_conversational_bots_demo_description_header">Description</string>
+  <string name="feature_app_conversational_bots_demo_intents_header">Sample Inputs</string>
+  <string name="feature_app_conversational_bots_permissions_string">Sample App requires permission to use microphone for Voice to Voice demo</string>
+  <string name="feature_app_conversational_bots_permissions_header">Microphone Permissions</string>
+
+  <string name="nosql_operation_title_query_by_partition_and_sort_condition_text">Query by Partition Key and Sort Condition</string>
+  <string name="nosql_operation_example_query_by_partition_and_sort_condition_text">Find all items with %1$s = \'%2$s\' and %3$s &lt; \'%4$s\'.</string>
+
+</resources>

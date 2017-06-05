@@ -1,0 +1,298 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:plainpie="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="horizontal" android:id="@+id/ScrollView">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.mysampleapp.demo.YourHistory">
+
+
+        <TextView
+            android:id="@+id/textViewV"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="string/veg"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="4dp"
+            plainpie:layout_constraintLeft_toLeftOf="parent"
+            plainpie:layout_constraintRight_toLeftOf="@+id/textViewF"
+            plainpie:layout_constraintHorizontal_chainStyle="spread"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp" />
+
+        <TextView
+            android:id="@+id/textViewF"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="string/fruit"
+            android:textStyle="bold"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            plainpie:layout_constraintLeft_toRightOf="@+id/textViewV"
+            plainpie:layout_constraintRight_toLeftOf="@+id/textViewFi"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="8dp" />
+
+        <TextView
+            android:id="@+id/textViewFi"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="string/fish"
+            android:textStyle="bold"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            plainpie:layout_constraintLeft_toRightOf="@+id/textViewF"
+            plainpie:layout_constraintRight_toLeftOf="parent"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="8dp" />
+
+        <az.plainpie.PieView
+            android:id="@+id/pieViewV"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="8dp"
+            plainpie:inner_pie_padding="30"
+            plainpie:inner_text_visibility="true"
+            plainpie:percentage="0.1"
+            plainpie:percentage_size="30"
+            plainpie:layout_constraintTop_toBottomOf="@+id/textViewV"
+            plainpie:layout_constraintLeft_toLeftOf="parent" />
+
+        <az.plainpie.PieView
+        android:id="@+id/pieViewF"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+            android:gravity="center"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="8dp"
+        plainpie:inner_pie_padding="30"
+        plainpie:inner_text_visibility="true"
+        plainpie:percentage="0.1"
+        plainpie:percentage_size="30"
+        plainpie:layout_constraintTop_toBottomOf="@+id/textViewF"
+        plainpie:layout_constraintLeft_toRightOf="@+id/pieViewV"
+            plainpie:layout_constraintRight_toLeftOf="@+id/pieViewFi"/>
+
+        <az.plainpie.PieView
+            android:id="@+id/pieViewFi"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="15dp"
+            plainpie:inner_pie_padding="30"
+            plainpie:inner_text_visibility="true"
+            plainpie:percentage="0.1"
+            plainpie:percentage_size="30"
+            plainpie:layout_constraintTop_toBottomOf="@+id/textViewFi"
+            plainpie:layout_constraintRight_toLeftOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewG"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="string/grain"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="4dp"
+            plainpie:layout_constraintTop_toBottomOf="@+id/pieViewV"
+            plainpie:layout_constraintLeft_toLeftOf="parent"
+            plainpie:layout_constraintRight_toLeftOf="@+id/textViewS"
+            plainpie:layout_constraintHorizontal_chainStyle="spread"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp" />
+
+        <TextView
+            android:id="@+id/textViewS"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="string/sugar"
+            android:textStyle="bold"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            plainpie:layout_constraintTop_toBottomOf="@+id/pieViewV"
+            plainpie:layout_constraintLeft_toRightOf="@+id/textViewG"
+            plainpie:layout_constraintRight_toLeftOf="parent"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="8dp" />
+
+        <az.plainpie.PieView
+            android:id="@+id/pieViewG"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="8dp"
+            plainpie:inner_pie_padding="30"
+            plainpie:inner_text_visibility="true"
+            plainpie:percentage="0.1"
+            plainpie:percentage_size="30"
+            plainpie:layout_constraintTop_toBottomOf="@+id/textViewG"
+            plainpie:layout_constraintLeft_toLeftOf="parent" />
+
+        <az.plainpie.PieView
+            android:id="@+id/pieViewS"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="45dp"
+            plainpie:inner_pie_padding="30"
+            plainpie:inner_text_visibility="true"
+            plainpie:percentage="0.1"
+            plainpie:percentage_size="30"
+            plainpie:layout_constraintTop_toBottomOf="@+id/textViewS"
+            plainpie:layout_constraintRight_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/textViewModEx"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="string/mod_ex"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="4dp"
+            plainpie:layout_constraintTop_toBottomOf="@+id/pieViewG"
+            plainpie:layout_constraintLeft_toLeftOf="parent"
+            plainpie:layout_constraintRight_toLeftOf="@+id/textViewStrEx"
+            plainpie:layout_constraintHorizontal_chainStyle="spread"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp" />
+
+        <TextView
+            android:id="@+id/textViewStrEx"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="string/strn_ex"
+            android:textStyle="bold"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            plainpie:layout_constraintTop_toBottomOf="@+id/pieViewS"
+            plainpie:layout_constraintLeft_toRightOf="@+id/textViewModEx"
+            plainpie:layout_constraintRight_toLeftOf="parent"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="8dp" />
+
+        <az.plainpie.PieView
+            android:id="@+id/pieViewModEx"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="8dp"
+            plainpie:inner_pie_padding="30"
+            plainpie:inner_text_visibility="true"
+            plainpie:percentage="0.1"
+            plainpie:percentage_size="30"
+            plainpie:layout_constraintTop_toBottomOf="@+id/textViewModEx"
+            plainpie:layout_constraintLeft_toLeftOf="parent" />
+
+        <az.plainpie.PieView
+            android:id="@+id/pieViewStrEx"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="45dp"
+            plainpie:inner_pie_padding="30"
+            plainpie:inner_text_visibility="true"
+            plainpie:percentage="0.1"
+            plainpie:percentage_size="30"
+            plainpie:layout_constraintTop_toBottomOf="@+id/textViewStrEx"
+            plainpie:layout_constraintRight_toLeftOf="parent"/>
+
+        <Button
+            android:id="@+id/button_daily"
+            android:layout_width="0dp"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:text="string/daily"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@color/percentageFillColor"
+            android:textColor="@color/grey_light"
+            plainpie:layout_constraintTop_toBottomOf="@+id/pieViewModEx"
+            plainpie:layout_constraintLeft_toLeftOf="parent"
+            plainpie:layout_constraintBottom_toBottomOf="parent"
+            plainpie:layout_constraintRight_toLeftOf="@+id/button_weekly"
+            plainpie:layout_constraintHorizontal_chainStyle="spread" />
+
+        <Button
+            android:id="@+id/button_weekly"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="string/weekly"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@color/grey_light"
+            plainpie:layout_constraintLeft_toRightOf="@+id/button_daily"
+            plainpie:layout_constraintRight_toLeftOf="@+id/button_monthly"
+            plainpie:layout_constraintBottom_toBottomOf="parent" />
+
+        <Button
+            android:id="@+id/button_monthly"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="string/monthly"
+            android:textColor="@color/grey_light"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorPrimaryDark"
+            plainpie:layout_constraintLeft_toRightOf="@+id/button_weekly"
+            plainpie:layout_constraintRight_toLeftOf="parent"
+            plainpie:layout_constraintBottom_toBottomOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

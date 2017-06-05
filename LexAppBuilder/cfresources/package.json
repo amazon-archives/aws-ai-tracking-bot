@@ -1,0 +1,11 @@
+{
+  "name": "cfresources",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.48.0"
+  }
+}

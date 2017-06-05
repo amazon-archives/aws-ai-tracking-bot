@@ -1,0 +1,17 @@
+{
+  "name": "lexappbuilder",
+  "version": "1.0.0",
+  "description": "Creates AWS Lex Bot and associated App",
+  "main": "index.js",
+  "dependencies": {
+    "adm-zip": "^0.4.7",
+    "aws-sdk": "^2.57.0",
+    "minimist": "^1.2.0",
+    "moment": "^2.18.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Amazon Web Services"
+}

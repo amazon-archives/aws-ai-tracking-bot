@@ -1,0 +1,887 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>My Sample App - Developer Instructions</title>
+        <link rel="stylesheet" href="css/style.css" type="text/css" media="screen, projection">
+        <script>var runOnLoad=function(c,o,d,e){function x(){for(e=1;c.length;)c.shift()()}o[d]?(document[d]('DOMContentLoaded',x,0),o[d]('load',x,0)):o.attachEvent('onload',x);return function(t){e?o.setTimeout(t,0):c.push(t)}}([],window,'addEventListener');</script>
+        <script type="text/javascript" src="js/CollapsibleLists.compressed.js">
+        </script>
+        <script type="text/javascript">
+            runOnLoad(function() { CollapsibleLists.apply(); });
+        </script>
+    </head>
+    <body>
+
+    <h3 class="align-center">
+        <img src="img/ic_launcher.png" width="128px"/><br/>
+My Sample App
+    </h3>
+<p>
+This download package contains an Android Studio project for a fully functioning Mobile App, which uses your configured AWS resources and identifiers, to demonstrate the project features you've selected. You can use this project as a starting point for your own product development, or you can follow the instructions below to copy and paste the required code into your own product.
+</p>
+<p>
+<strong> IMPORTANT: </strong>This package was custom generated for you, using your selected project options. It contains your own resource and account identifiers and should be kept private.<br/><br/>
+</p>
+
+        <div id="listContainer">
+            <ul class="collapsibleList">
+
+<!-- begin - heading = Setup -->
+
+  <li>
+Setup
+    <ul>
+
+<!-- begin - sub-heading = Setup -->
+
+      <li>
+Integrated Development Environment
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+1. System Requirements</b></p><br/>
+
+Your system must include the following:</br>&nbsp;&nbsp;- Android Studio 1.4 or newer<br/>&nbsp;&nbsp;- Android SDK 4.4 (KitKat) API Level 19 or newer<br/>&nbsp;&nbsp;- Android SDK Build-tools 23.0.1<br/>&nbsp;&nbsp;- Android Device with Android OS 4.0.3 (IceCreamSandwich) API Level 15 or newer
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+2. Install Android Studio</b></p><br/>
+
+If you have not already installed the Android Studio IDE (Integrated Development Environment) on your host, you can download it from the following location:
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_blank" HREF="https://developer.android.com/sdk">https://developer.android.com/sdk</A></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+3. Install Android SDK (Software Development Kit)</b></p><br/>
+
+If you have not already installed the latest Android SDK, you can do so within Android Studio.<br/><br/>Go to...<br/><p><b>Tools -> Android -> SDK Manager -> Appearance & Behavior -> System Settings -> Android SDK</b></p><br/>Then, select the Android SDK Platform version you would like to use. The SDK Manager will download the appropriate Android SDK Platform version and apply any available updates.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+4. Install AVD (Android Virtual Device)</b></p><br/>
+
+If you have not already installed an Android Virtual Device, you can do so within Android Studio.<br/><br/>Go to...<br/><p><b>Tools -> Android -> AVD Manager</b></p><br/>Then, click "+ Create Virtual Device" and select the device you would like to use in the Android emulator (e.g., Nexus 5). Select the appropriate image from the list (e.g., Lollipop API Level 22 x86 Android 5.1.1) and click the "Next" button. Name the AVD and click the "Finish" button.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = Integrated Development Environment -->
+
+    </ul>
+  </li>
+
+<!-- end - heading = Setup -->
+
+
+<!-- begin - heading = Compile and Run -->
+
+  <li>
+Compile and Run
+    <ul>
+
+<!-- begin - sub-heading = Compile and Run -->
+
+      <li>
+Launch App
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+5. Import MySampleApp Project into Android Studio</b></p><br/>
+
+Once you have downloaded and unzipped the sample app project files, please open Android Studio and choose...<br/><p><b>Import project (Eclipse ADT, Gradle, etc.)</b></p><br/>Find the folder where you extracted the zip file contents and select the "MySampleApp" sub-folder. Android Studio will import the project and build it using Gradle.<br/><br/> Note that the project may have several dependencies, which Gradle will automatically retrieve from online repositories. The first time you build the app, it may take longer than subsequent incremental builds.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+6. Run MySampleApp in Debug Mode</b></p><br/>
+
+Once Gradle finishes building, you can click the "Debug app" icon to launch the app in the Android emulator.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = Launch App -->
+
+
+<!-- begin - sub-heading = Compile and Run -->
+
+      <li>
+User Identity - Try It!
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+7. Demonstrate User Identity</b></p><br/>
+
+Launch MySampleApp in the Android emulator. If you've selected to enable User Sign-in in your project, you should sign in to the app. Then, click on the "User Sign-In" demonstration section and then click the "Demo User Identity" button. You will see a unique identifier for the user. This identifies the user to AWS systems and provides the user temporary permissions to access your configured AWS resources.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+8. Verify User Identity</b></p><br/>
+
+Go to the AWS Cognito console, and you should see the count of users in your Cognito Identity Pool is now greater than zero.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_blank" HREF="https://console.aws.amazon.com/cognito/">https://console.aws.amazon.com/cognito/</A></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = User Identity - Try It! -->
+
+    </ul>
+  </li>
+
+<!-- end - heading = Compile and Run -->
+
+
+<!-- begin - heading = Discover -->
+
+  <li>
+Discover
+    <ul>
+
+<!-- begin - sub-heading = Discover -->
+
+      <li>
+What's in here?
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+9. Project Folders</b></p><br/>
+
+The project contains a number of folders under MySampleApp/app/src/main/java, which contain java packages. Here is a brief explanation of the groups of java packages.<br/><br/>&nbsp;&nbsp;- <B>com/mysampleapp/demo</B> - Demonstration features, you can clone and edit for your own app or discard.<br/>&nbsp;&nbsp;- <B>com/mysampleapp</B> - Example Application user interface and logic, you can clone and edit for your own app or discard.<br/>&nbsp;&nbsp;- <B>com/amazonaws/mobile</B> - Middle layer helper code, simplifies use of various SDKs and adds functionality.</B>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+10. AWS Configuration - Identifiers and Constants</b></p><br/>
+
+This section simply provides information about the generated code in the MySampleApp project.<br/><br/>
+
+This file has been generated for you, based on your project configuration and on your AWS cloud resources. It contains your private identifiers, which the application will use to access AWS services.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/amazonaws/mobile/AWSConfiguration.java">MySampleApp/app/src/main/java/com/amazonaws/mobile/AWSConfiguration.java</A></SPAN><BR/><BR/><SPAN style="font-family: courier"><TABLE style="border:0; "><TR><TD><PRE>2</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>package com.amazonaws.mobile;</PRE></TD></TR><TR><TD><PRE>3</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE></PRE></TD></TR><TR><TD><PRE>4</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>import com.amazonaws.mobilehelper.config.AWSMobileHelperConfiguration;</PRE></TD></TR><TR><TD><PRE>5</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>import com.amazonaws.regions.Regions;</PRE></TD></TR><TR><TD><PRE>6</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE></PRE></TD></TR><TR><TD><PRE>7</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>/**</PRE></TD></TR><TR><TD><PRE>8</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE> * This class defines constants for the developer's resource</PRE></TD></TR><TR><TD><PRE>9</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE> * identifiers and API keys. This configuration should not</PRE></TD></TR><TR><TD><PRE>10</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE> * be shared or posted to any public source code repository.</PRE></TD></TR><TR><TD><PRE>11</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE> */</PRE></TD></TR><TR><TD><PRE>12</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>public class AWSConfiguration {</PRE></TD></TR><TR><TD><PRE>13</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    // AWS MobileHub user agent string</PRE></TD></TR><TR><TD><PRE>14</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    public static final String AWS_MOBILEHUB_USER_AGENT =</PRE></TD></TR><TR><TD><PRE>15</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        "MobileHub 1570c8f7-74d5-4a47-91c9-a90ce28d2399 aws-my-sample-app-android-v0.17";</PRE></TD></TR><TR><TD><PRE>16</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    // AMAZON COGNITO</PRE></TD></TR><TR><TD><PRE>17</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    public static final Regions AMAZON_COGNITO_REGION =</PRE></TD></TR><TR><TD><PRE>18</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>      Regions.fromName("us-east-1");</PRE></TD></TR><TR><TD><PRE>19</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    public static final String  AMAZON_COGNITO_IDENTITY_POOL_ID =</PRE></TD></TR><TR><TD><PRE>20</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        "us-east-1:5807fb12-1a5b-413e-a674-695e6b6ae6eb";</PRE></TD></TR><TR><TD><PRE>21</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE></PRE></TD></TR><TR><TD><PRE>22</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    private static final AWSMobileHelperConfiguration helperConfiguration = new AWSMobileHelperConfiguration.Builder()</PRE></TD></TR><TR><TD><PRE>23</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        .withCognitoRegion(AMAZON_COGNITO_REGION)</PRE></TD></TR><TR><TD><PRE>24</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        .withCognitoIdentityPoolId(AMAZON_COGNITO_IDENTITY_POOL_ID)</PRE></TD></TR><TR><TD><PRE>25</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        .build();</PRE></TD></TR><TR><TD><PRE>26</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    /**</PRE></TD></TR><TR><TD><PRE>27</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>     * @return the configuration for AWSKit.</PRE></TD></TR><TR><TD><PRE>28</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>     */</PRE></TD></TR><TR><TD><PRE>29</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    public static AWSMobileHelperConfiguration getAWSMobileHelperConfiguration() {</PRE></TD></TR><TR><TD><PRE>30</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        return helperConfiguration;</PRE></TD></TR><TR><TD><PRE>31</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    }</PRE></TD></TR><TR><TD><PRE>32</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>}</PRE></TD></TR></TABLE></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+11. AWS Mobile Client - Bootstraps the App</b></p><br/>
+
+This section simply provides information about the generated code in the MySampleApp project.<br/><br/>
+
+The AWS Mobile Client bootstraps the app. It creates an identity manager to establish the user identity with Amazon Cognito. It also enables whatever features you have selected for your project.  For example, it handles the push notification device tokens, and it tells the Amazon Mobile Analytics client when to pause and resume metrics collection for the user session.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/amazonaws/mobile/AWSMobileClient.java">MySampleApp/app/src/main/java/com/amazonaws/mobile/AWSMobileClient.java</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+12. Identity Manager - Identifies the User</b></p><br/>
+
+This section simply provides information about the generated code in the MySampleApp project.<br/><br/>
+
+The Identity Manager keeps track of the identity of the current app user by storing the user's Amazon Cognito Identity ID. It is partially responsible for signing the user in to the app if you have User Sign-in enabled in your project. It passes results of the sign-in operation back to the application's handler.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/amazonaws/mobile/user/IdentityManager.java">MySampleApp/app/src/main/java/com/amazonaws/mobile/user/IdentityManager.java</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = What's in here? -->
+
+
+<!-- begin - sub-heading = Discover -->
+
+      <li>
+Where can I learn more?
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+13. AWS Mobile SDK for Android</b></p><br/>
+
+All of the code in the sample app is built on top of the AWS Mobile SDKs. The SDKs that are included in your download depend on which features you've enabled in your project. You may want to use more advanced capabilities directly in the one of the AWS Mobile SDKs. To learn more, visit
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_blank" HREF="http://docs.aws.amazon.com/mobile/sdkforandroid/developerguide/">http://docs.aws.amazon.com/mobile/sdkforandroid/developerguide/</A></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = Where can I learn more? -->
+
+    </ul>
+  </li>
+
+<!-- end - heading = Discover -->
+
+
+<!-- begin - heading = Develop -->
+
+  <li>
+Develop
+    <ul>
+
+<!-- begin - sub-heading = Develop -->
+
+      <li>
+Development Methods
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+14. Starter versus Example</b></p><br/>
+
+There are two convenient ways you can use what is provided in MySampleApp to enable your own app project with your configured features and cloud resources. You can use MySampleApp as a starter app, and build your own app on top of it. Alternatively, you can use MySampleApp as an example, and copy and paste the source code from MySampleApp into your own app project.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = Development Methods -->
+
+
+<!-- begin - sub-heading = Develop -->
+
+      <li>
+Use as a Starter App
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+15. Use MySampleApp as a Starter App</b></p><br/>
+
+When you use MySampleApp as a starter app for your own app project, it serves as a starting point for your own App development. Remove the "demo" features, replace the app name and package name, build in your own app logic and user interface, and you're done!
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+16. Set Unique App Package Name</b></p><br/>
+
+Please copy this segment of code from the MySampleApp project into your own project.<br/><br/>
+
+Android Apps must each have a unique package name, before they can be published to any app store. If you have not already, please make sure you replace "com.mysampleapp" with a unique package name for your app. Note that you may also have to change Activity class names in your AndroidManifest.xml file; Android will look for com.mysampleapp.MainActivity.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/AndroidManifest.xml">MySampleApp/app/src/main/AndroidManifest.xml</A></SPAN><BR/><BR/><SPAN style="font-family: courier"><TABLE style="border:0; "><TR><TD><PRE>9</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>&lt;manifest xmlns:android="http://schemas.android.com/apk/res/android"</PRE></TD></TR><TR><TD><PRE>10</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    package="com.mysampleapp" ></PRE></TD></TR></TABLE></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = Use as a Starter App -->
+
+
+<!-- begin - sub-heading = Develop -->
+
+      <li>
+Use as an Example
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+17. Use MySampleApp as an Example</b></p><br/>
+
+When you use MySampleApp as an example, you learn from what is demonstrated in MySampleApp and copy and paste the parts you need. This section explains the steps needed to copy and paste the MySampleApp functionality into your own app project.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+18. Copy Customized Helper Code</b></p><br/>
+
+Please copy this folder and all of its sub-folders from the MySampleApp project into your project.<br/><br/>
+
+This folder contains a set of helper classes that have been custom generated for you. These were generated based on your project configuration and on the AWS cloud resources and identifiers that were created for you when you configured the project. These classes simplify the use of all the SDKs that are required to support your project. You should not need to modify these files, but they should be included in your project, in their entirety. Copy the contents of the "amazonaws" folder into the "java/com" folder of your own project.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/amazonaws">MySampleApp/app/src/main/java/com/amazonaws</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+19. Add AWS SDKs to Gradle Build</b></p><br/>
+
+Please copy this segment of code from the MySampleApp project into your own project.<br/><br/>
+
+Add the AWS SDKs to the Gradle build configuration, so they are retrieved from Maven Central at build-time.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/build.gradle">MySampleApp/app/build.gradle</A></SPAN><BR/><BR/><SPAN style="font-family: courier"><TABLE style="border:0; "><TR><TD><PRE>56</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    compile 'com.amazonaws:aws-android-sdk-core:2.4.2'</PRE></TD></TR><TR><TD><PRE>57</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    compile('com.amazonaws:aws-android-sdk-lex:2.4.2@aar') {</PRE></TD></TR></TABLE></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+20. Allow Network Access</b></p><br/>
+
+Please copy this segment of code from the MySampleApp project into your own project.<br/><br/>
+
+In order for your app to use AWS resources, it must enable access to the internet. This change enables network access in the app.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/AndroidManifest.xml">MySampleApp/app/src/main/AndroidManifest.xml</A></SPAN><BR/><BR/><SPAN style="font-family: courier"><TABLE style="border:0; "><TR><TD><PRE>13</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE>&lt;manifest xmlns:android="http://schemas.android.com/apk/res/android"</PRE></TD></TR><TR><TD><PRE>14</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE>    package="com.mysampleapp" ></PRE></TD></TR><TR><TD><PRE>15</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE></PRE></TD></TR><TR><TD><PRE>16</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    &lt;uses-permission android:name="android.permission.INTERNET" /></PRE></TD></TR><TR><TD><PRE>17</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    &lt;uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /></PRE></TD></TR><TR><TD><PRE>18</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    &lt;uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /></PRE></TD></TR><TR><TD><PRE>19</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE>    &lt;uses-permission android:name="android.permission.RECORD_AUDIO" /></PRE></TD></TR></TABLE></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+21. Set Custom Application Class in Manifest</b></p><br/>
+
+This section simply provides information about the generated code in the MySampleApp project.<br/><br/>
+
+Set a custom Application class in the manifest. This class will be used to initialize common components for the application. Here, we use com.mysampleapp.Application as an example.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/AndroidManifest.xml">MySampleApp/app/src/main/AndroidManifest.xml</A></SPAN><BR/><BR/><SPAN style="font-family: courier"><TABLE style="border:0; "><TR><TD><PRE>40</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    &lt;application</PRE></TD></TR><TR><TD><PRE>41</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        android:allowBackup="true"</PRE></TD></TR><TR><TD><PRE>42</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        android:icon="@mipmap/ic_launcher"</PRE></TD></TR><TR><TD><PRE>43</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        android:label="@string/app_name"</PRE></TD></TR><TR><TD><PRE>44</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        android:theme="@style/AppTheme"</PRE></TD></TR><TR><TD><PRE>45</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        android:name="com.mysampleapp.Application"</PRE></TD></TR><TR><TD><PRE>46</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        ></PRE></TD></TR></TABLE></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+22. Add Custom Application Class</b></p><br/>
+
+Please copy this segment of code from the MySampleApp project into your own project.<br/><br/>
+
+Create a custom Application class. This class initializes common components for the application.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/mysampleapp/Application.java">MySampleApp/app/src/main/java/com/mysampleapp/Application.java</A></SPAN><BR/><BR/><SPAN style="font-family: courier"><TABLE style="border:0; "><TR><TD><PRE>2</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>package com.mysampleapp;</PRE></TD></TR><TR><TD><PRE>3</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE></PRE></TD></TR><TR><TD><PRE>4</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>import android.support.multidex.MultiDexApplication;</PRE></TD></TR><TR><TD><PRE>5</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>import android.util.Log;</PRE></TD></TR><TR><TD><PRE>6</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE></PRE></TD></TR><TR><TD><PRE>7</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>import com.amazonaws.mobile.AWSMobileClient;</PRE></TD></TR><TR><TD><PRE>8</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE></PRE></TD></TR><TR><TD><PRE>9</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>/**</PRE></TD></TR><TR><TD><PRE>10</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE> * Application class responsible for initializing singletons and other common components.</PRE></TD></TR><TR><TD><PRE>11</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE> */</PRE></TD></TR><TR><TD><PRE>12</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>public class Application extends MultiDexApplication {</PRE></TD></TR><TR><TD><PRE>13</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    private static final String LOG_TAG = Application.class.getSimpleName();</PRE></TD></TR><TR><TD><PRE>14</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE></PRE></TD></TR><TR><TD><PRE>15</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    @Override</PRE></TD></TR><TR><TD><PRE>16</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    public void onCreate() {</PRE></TD></TR><TR><TD><PRE>17</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        Log.d(LOG_TAG, "Application.onCreate - Initializing application...");</PRE></TD></TR><TR><TD><PRE>18</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        super.onCreate();</PRE></TD></TR><TR><TD><PRE>19</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        initializeApplication();</PRE></TD></TR><TR><TD><PRE>20</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        Log.d(LOG_TAG, "Application.onCreate - Application initialized OK");</PRE></TD></TR><TR><TD><PRE>21</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    }</PRE></TD></TR><TR><TD><PRE>22</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE></PRE></TD></TR><TR><TD><PRE>23</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    private void initializeApplication() {</PRE></TD></TR><TR><TD><PRE>24</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        AWSMobileClient.initializeMobileClientIfNecessary(getApplicationContext());</PRE></TD></TR><TR><TD><PRE>25</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE></PRE></TD></TR><TR><TD><PRE>26</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        // ...Put any application-specific initialization logic here...</PRE></TD></TR><TR><TD><PRE>27</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>    }</PRE></TD></TR><TR><TD><PRE>28</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>}</PRE></TD></TR></TABLE></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+23. Initialize the AWS Mobile Client</b></p><br/>
+
+This section simply provides information about the generated code in the MySampleApp project.<br/><br/>
+
+Initialize the AWS Mobile Client class. This class bootstraps the application, so that it can make calls to AWS services. This call must be included somewhere in the application initialization logic, before any calls are made to AWS services. Here, we demonstrate initializing it in the Application onCreate lifecycle method.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/mysampleapp/Application.java">MySampleApp/app/src/main/java/com/mysampleapp/Application.java</A></SPAN><BR/><BR/><SPAN style="font-family: courier"><TABLE style="border:0; "><TR><TD><PRE>35</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE>    private void initializeApplication() {</PRE></TD></TR><TR><TD><PRE>36</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        AWSMobileClient.initializeMobileClientIfNecessary(getApplicationContext());</PRE></TD></TR><TR><TD><PRE>37</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE></PRE></TD></TR></TABLE></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+24. Add Splash Activity to Manifest</b></p><br/>
+
+Please copy this segment of code from the MySampleApp project into your own project.<br/><br/>
+
+The Splash Activity is the first screen the user sees. It typically shows a logo or other image for the app while it initializes necessary components. If you do not have a Splash Activity, you can follow these instructions to add one. This segment adds the Splash Activity to the Android Manifest file.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/AndroidManifest.xml">MySampleApp/app/src/main/AndroidManifest.xml</A></SPAN><BR/><BR/><SPAN style="font-family: courier"><TABLE style="border:0; "><TR><TD><PRE>48</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE>        android:icon="@mipmap/ic_launcher"</PRE></TD></TR><TR><TD><PRE>49</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE>        android:label="@string/app_name"</PRE></TD></TR><TR><TD><PRE>50</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE>        android:theme="@style/AppTheme"</PRE></TD></TR><TR><TD><PRE>51</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE>        android:name="com.mysampleapp.Application"</PRE></TD></TR><TR><TD><PRE>52</PRE></TD><TD style="width:900px;background-color:#FFFFFF;color:#000000;"><PRE>        ></PRE></TD></TR><TR><TD><PRE>53</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        &lt;activity</PRE></TD></TR><TR><TD><PRE>54</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>            android:name=".SplashActivity"</PRE></TD></TR><TR><TD><PRE>55</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>            android:label="@string/app_name"</PRE></TD></TR><TR><TD><PRE>56</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"></PRE></TD></TR><TR><TD><PRE>57</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>            &lt;intent-filter></PRE></TD></TR><TR><TD><PRE>58</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>                &lt;action android:name="android.intent.action.MAIN" /></PRE></TD></TR><TR><TD><PRE>59</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>                &lt;category android:name="android.intent.category.LAUNCHER" /></PRE></TD></TR><TR><TD><PRE>60</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>            &lt;/intent-filter></PRE></TD></TR></TABLE></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+25. Add Splash Activity Layout</b></p><br/>
+
+Please copy this file from the MySampleApp project into your own project.<br/><br/>
+
+The Splash Activity is the first screen the user sees. It typically shows a logo or other image for the app while it initializes necessary components. This file specifies the layout for the Splash Activity.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/res/layout/activity_splash.xml">MySampleApp/app/src/main/res/layout/activity_splash.xml</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+26. Add Splash Activity Class</b></p><br/>
+
+Please copy this file from the MySampleApp project into your own project.<br/><br/>
+
+The Splash Activity is the first screen the user sees. It typically shows a logo or other image for the app, while it initializes necessary components. This file specifies the behavior of the Splash Activity. You can customize this activity to perform initialization operations for the application.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/mysampleapp/SplashActivity.java">MySampleApp/app/src/main/java/com/mysampleapp/SplashActivity.java</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+27. Add Main Activity to Manifest</b></p><br/>
+
+Please copy this segment of code from the MySampleApp project into your own project.<br/><br/>
+
+This segment adds the Main Activity to the Android Manifest file.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/AndroidManifest.xml">MySampleApp/app/src/main/AndroidManifest.xml</A></SPAN><BR/><BR/><SPAN style="font-family: courier"><TABLE style="border:0; "><TR><TD><PRE>58</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>        &lt;activity</PRE></TD></TR><TR><TD><PRE>59</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>            android:name=".MainActivity"</PRE></TD></TR><TR><TD><PRE>60</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>            android:launchMode="singleInstance"</PRE></TD></TR><TR><TD><PRE>61</PRE></TD><TD style="width:900px;background-color:#DDDDDD;color:#0000FF;"><PRE>            android:label="@string/title_activity_main"></PRE></TD></TR></TABLE></SPAN>
+<br/>
+
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+28. Add Main Activity Layout</b></p><br/>
+
+Please copy this file from the MySampleApp project into your own project.<br/><br/>
+
+The Main Activity is where your core application logic will reside. This file specifies the layout for the Main Activity. You can modify this file to customize the look of your main screen.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/res/layout/activity_main.xml">MySampleApp/app/src/main/res/layout/activity_main.xml</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+29. Add Main Activity Class</b></p><br/>
+
+Please copy this file from the MySampleApp project into your own project.<br/><br/>
+
+The Main Activity is where your core application logic will reside. This file specifies the behavior and business logic for the Main Activity. You can modify this file to customize your app's behavior.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/mysampleapp/MainActivity.java">MySampleApp/app/src/main/java/com/mysampleapp/MainActivity.java</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = Use as an Example -->
+
+
+<!-- begin - sub-heading = Develop -->
+
+      <li>
+Update a Sample-based App
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+30. Update an existing App</b></p><br/>
+
+If you have already used either the Example or Starter method to enable AWS resources in your project, then you can use these steps to upgrade to the latest generated code. This will allow you to upgrade SDKs and pick up other improvements and bug fixes.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+31. Replace Customized Helper Code</b></p><br/>
+
+Please copy this folder and all of its sub-folders from the MySampleApp project into your project.<br/><br/>
+
+This folder contains the latest set of helper classes that have been custom generated for you. These were generated based on your project configuration and on the AWS cloud resources and identifiers that were created for you when you configured the project. These classes simplify the use of the SDKs required to support your project. You should be able to replace your previously generated project's "java/com/amazonaws" folder with the one from your recently generated download.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/amazonaws">MySampleApp/app/src/main/java/com/amazonaws</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+32. Update Gradle Build</b></p><br/>
+
+Please merge this file from the MySampleApp project into your own project.<br/><br/>
+
+Examine the differences between the newly generated build.gradle file and your existing project's build.gradle file. Merge the updates into your existing project.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/build.gradle">MySampleApp/app/build.gradle</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+33. Update Application and Demo Code</b></p><br/>
+
+Please merge this folder and all of its sub-folders from the MySampleApp project into your project.<br/><br/>
+
+Update your application code to build with the new helper code. Resolve any compile errors due to SDK version changes.
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../MySampleApp/app/src/main/java/com/mysampleapp">MySampleApp/app/src/main/java/com/mysampleapp</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = Update a Sample-based App -->
+
+
+<!-- begin - sub-heading = Develop -->
+
+      <li>
+Software License
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+34. Software License</b></p><br/>
+
+This section simply provides information about the generated code in the MySampleApp project.<br/><br/>
+
+Please refer to the following file for details about the license associated with the sample download project and the included software development kits (SDKs).
+<br/>
+<SPAN style="font-family: courier"><A TARGET="_BLANK" HREF="file:../LICENSE.txt">LICENSE.txt</A></SPAN>
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = Software License -->
+
+    </ul>
+  </li>
+
+<!-- end - heading = Develop -->
+
+
+<!-- begin - heading = Troubleshoot -->
+
+  <li>
+Troubleshoot
+    <ul>
+
+<!-- begin - sub-heading = Troubleshoot -->
+
+      <li>
+Development Environment Issues
+
+<!-- begin - steps list -->
+
+        <ul>
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+35. Android Studio Version</b></p><br/>
+
+Many problems can be resolved by simply upgrading an older version of Android Studio. When you first open Android Studio, the version shows in the bottom of the "Welcome to Android Studio" window. You should be on version 1.3.2 or newer. If your version is older, you should click the link next to the version to "Check for updates now."
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+36. Android Studio Import</b></p><br/>
+
+The My Sample App project is a gradle project, so it must be imported into Android Studio, using the "Import project (Eclipse ADT, Gradle, etc.)" option on the "Welcome to Android Studio" window. If you accidentally open the project in another way, simply close it and open it again, using the import option.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+
+<!-- begin - step -->
+
+          <li class="lastLevel">
+<br/><p><b>
+37. Android Studio project looks empty?</b></p><br/>
+
+When you import the project into Android Studio, if you do not use the correct import option or you do not select the correct folder in the download package, then Android Studio may show the project as empty. Make sure you follow the instructions in this file under "Compile and Run" - "Launch App" when you import the project.
+<br/>
+          </li>
+
+<!-- end - step -->
+
+        </ul>
+
+<!-- end - steps list -->
+
+
+<br/>
+      </li>
+
+<!-- end - sub-heading = Development Environment Issues -->
+
+    </ul>
+  </li>
+
+<!-- end - heading = Troubleshoot -->
+
+            </ul>
+        </div>
+    </body>
+</html>

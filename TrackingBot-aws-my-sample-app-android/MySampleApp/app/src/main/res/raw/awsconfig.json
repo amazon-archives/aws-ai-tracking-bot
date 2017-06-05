@@ -1,0 +1,9 @@
+{
+  "config": {
+    "BOTNAME": "Resolutions",
+    "AWS_MOBILEHUB_USER_AGENT": "MobileHub b3e10521-7958-4f04-8a49-467cf7843463 aws-my-sample-app-android-v0.17",
+    "AMAZON_COGNITO_REGION": "us-east-1",
+    "AMAZON_COGNITO_IDENTITY_POOL_ID": "us-east-1:ca807a13-3c3f-4c6d-b769-616620ae8e63",
+    "AMAZON_DYNAMODB_REGION": "us-east-1"
+  }
+}

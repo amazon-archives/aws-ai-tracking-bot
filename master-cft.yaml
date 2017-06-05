@@ -1,0 +1,792 @@
+Description: >
+  This template uses AWS CodeBuild and AWS CodePipeline to
+  achieve continuous deployment of the sample tracking-bot source code
+  from a GitHub repository. Note: The StackName for this app stack must
+  not contain numerals 0-9 or a hyphen. The StackName is appended to resources
+  created downstream and Lex will not handle numerals or hyphens as part of
+  names for slot types, intents, or the bot name at the present time.
+
+Parameters:
+
+  GitHubRepo:
+    Type: String
+    Default: tracking-bot
+    Description: The repo name of the sample service
+
+  GitHubRepoOwner:
+    Type: String
+    Description: GitHub username of repo owner
+
+  GitHubBranch:
+    Type: String
+    Default: master
+    Description: The branch of the repo to continuously deploy
+
+  GitHubToken:
+    Type: String
+    Description: >
+      GitHub OAuth Token with access to the repo (https://github.com/settings/tokens)
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterLabels:
+      GitHubRepo:
+        default: "Repo"
+      GitHubRepoOwner:
+        default: "Owner"
+      GitHubBranch:
+        default: "Branch"
+      GitHubToken:
+        default: "Personal Access Token"
+    ParameterGroups:
+      - Label:
+          default: GitHub Configuration
+        Parameters:
+          - GitHubRepo
+          - GitHubBranch
+          - GitHubRepoOwner
+          - GitHubToken
+
+
+Resources:
+    CleanStackNameExecutionRole:
+        Type: AWS::IAM::Role
+        Properties:
+            Path: /
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - Principal:
+                          Service:
+                              - lambda.amazonaws.com
+                      Effect: Allow
+                      Action:
+                          - sts:AssumeRole
+            Policies:
+                - PolicyName: LogsForLambda
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - logs:CreateLogGroup
+                                - logs:CreateLogStream
+                                - logs:PutLogEvents
+                            Resource:
+                                - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+                                - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
+    CleanStackName:
+        DependsOn: CleanStackNameExecutionRole
+        Type: Custom::CleanStackName
+        Properties:
+            ServiceToken: !GetAtt CleanStackNameFunction.Arn
+    CleanStackNameFunction:
+        Type: AWS::Lambda::Function
+        Properties:
+            Handler: index.handler
+            Role: !GetAtt CleanStackNameExecutionRole.Arn
+            Runtime: python2.7
+            Timeout: 300
+            Code:
+                ZipFile: !Sub |
+                    from __future__ import print_function
+                    import json
+                    import boto3
+                    import cfnresponse
+                    import time
+                    def handler(event, context):
+                        print(json.dumps(event))
+                        if (event["RequestType"] == "Delete"):
+                            responseData={"Data":"OK"}
+                            try:
+                                cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData)
+                            except Exception as e:
+                                print("Exception thrown in cfnresponse: %s" % str(e))
+                                pass
+                        else:
+                            val = enforceSyntax("${AWS::StackName}")
+                            time.sleep(10)  # pause for CloudWatch logs
+                            responseData={"Data":"OK","CleanStackNameValue":val}
+                            try:
+                                cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData)
+                            except Exception as e:
+                                print("Exception thrown in cfnresponse: %s" % str(e))
+                                pass
+                    def enforceSyntax(val):
+                        badChars=['0','1','2','3','4','5','6','7','8','9','-']
+                        goodChars=['a','b','c','d','e','f','g','h','i','j','k']
+                        i=0
+                        res = val
+                        for b in badChars:
+                            res = res.replace(b,goodChars[i])
+                            i +=1
+                        return res
+    # Artifact Bucket used by CodePipeline and CodBuild
+    ArtifactStore:
+        Type: AWS::S3::Bucket
+        DependsOn: CleanStackName
+        DeletionPolicy: Retain
+        Properties:
+            VersioningConfiguration:
+                Status: Enabled
+
+    # Bucket where the lex web ui is deployed
+    WebAppBucket:
+        Type: AWS::S3::Bucket
+        DependsOn: CleanStackName
+        DeletionPolicy: Retain
+        Properties:
+            WebsiteConfiguration:
+                IndexDocument: index.html
+            VersioningConfiguration:
+                Status: Enabled
+
+    # bucket where the dashboard app ui is deployed
+    WebAppBucketDashboard:
+        Type: AWS::S3::Bucket
+        DependsOn: CleanStackName
+        DeletionPolicy: Retain
+        Properties:
+            WebsiteConfiguration:
+                IndexDocument: index.html
+            VersioningConfiguration:
+                Status: Enabled
+
+    CognitoIdentityPool:
+        Type: AWS::Cognito::IdentityPool
+        DependsOn: CleanStackName
+        Properties:
+            IdentityPoolName: !Sub "${CleanStackName.CleanStackNameValue}CognitoPool"
+            AllowUnauthenticatedIdentities: true
+
+    CognitoIdentityPoolSetRole:
+        Type: AWS::Cognito::IdentityPoolRoleAttachment
+        Properties:
+            IdentityPoolId: !Ref CognitoIdentityPool
+            Roles:
+                unauthenticated: !GetAtt CognitoUnauthRole.Arn
+
+    CognitoUnauthRole:
+        Type: AWS::IAM::Role
+        Properties:
+            Path: /
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - Principal:
+                          Federated: cognito-identity.amazonaws.com
+                      Effect: Allow
+                      Action:
+                          - sts:AssumeRoleWithWebIdentity
+                      Condition:
+                          StringEquals:
+                              cognito-identity.amazonaws.com:aud: !Ref CognitoIdentityPool
+                          ForAnyValue:StringLike:
+                              cognito-identity.amazonaws.com:amr: unauthenticated
+            Policies:
+                - PolicyName: PollySynth
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - polly:SynthesizeSpeech
+                            Resource: '*'
+                - PolicyName: LexPost
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - lex:PostText
+                                - lex:PostContent
+                            Resource:
+                               - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:${CleanStackName.CleanStackNameValue}:*"
+
+                - PolicyName: DynamoDBAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - dynamodb:BatchWriteItem
+                                - dynamodb:DeleteItem
+                                - dynamodb:PutItem
+                                - dynamodb:UpdateItem
+                                - dynamodb:DescribeTable
+                                - dynamodb:GetItem
+                                - dynamodb:ListTables
+                                - dynamodb:Query
+                            Resource:
+                                - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Attribute"
+                                - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Aggregate"
+                                - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Raw"
+                            Condition:
+                                ForAllValues:StringEquals:
+                                        dynamodb:LeadingKeys:
+                                            - "${cognito-identity.amazonaws.com:sub}"
+
+
+    CodeBuildRole:
+        Type: AWS::IAM::Role
+        Properties:
+            Path: /
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - Principal:
+                          Service:
+                              - codebuild.amazonaws.com
+                      Effect: Allow
+                      Action:
+                          - sts:AssumeRole
+            Policies:
+                - PolicyName: CloudWatchLogsCodeBuild
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - logs:CreateLogGroup
+                                - logs:CreateLogStream
+                                - logs:PutLogEvents
+                            Resource: "*"
+                - PolicyName: CloudFormationAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - cloudformation:CreateStack
+                                - cloudformation:DeleteStack
+                                - cloudformation:DescribeStacks
+                                - cloudformation:ListStacks
+                                - cloudformation:UpdateStack
+                            Resource: "*"
+                - PolicyName: LambdaCreateAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - lambda:CreateFunction
+                                - lambda:DeleteFunction
+                                - lambda:InvokeFunction
+                                - lambda:GetFunctionConfiguration
+                                - lambda:GetFunction
+                                - lambda:UpdateFunctionCode
+                                - lambda:AddPermission
+                            Resource: "*"
+                - PolicyName: IamCreateRoleAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - iam:CreateRole
+                                - iam:DeleteRole
+                                - iam:PutRolePolicy
+                                - iam:DeleteRolePolicy
+                                - iam:GetRole
+                                - iam:PassRole
+                                - iam:CreateServiceLinkedRole
+                            Resource: "*"
+                - PolicyName: CognitoCreateRoleAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - cognito-identity:CreateIdentityPool
+                                - cognito-identity:DeleteIdentityPool
+                                - cognito-identity:ListIdentityPools
+                                - cognito-identity:SetIdentityPoolRoles
+                            Resource: "*"
+                - PolicyName: DynamoDBAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - dynamodb:CreateTable
+                                - dynamodb:DeleteTable
+                                - dynamodb:DescribeLimits
+                                - dynamodb:DescribeTable
+                                - dynamodb:ListTables
+                                - dynamodb:UpdateTable
+                            Resource: "*"
+                - PolicyName: LexAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - lex:CreateBotChannelAssociation
+                                - lex:CreateBotVersion
+                                - lex:CreateIntentVersion
+                                - lex:CreateSlotTypeVersion
+                                - lex:DeleteBot
+                                - lex:DeleteBotAlias
+                                - lex:DeleteBotChannelAssociation
+                                - lex:DeleteIntent
+                                - lex:DeleteSlotType
+                                - lex:DeleteUtterances
+                                - lex:GetBot
+                                - lex:GetBotAlias
+                                - lex:GetBotAliases
+                                - lex:GetBotChannelAssociation
+                                - lex:GetBotChannelAssociations
+                                - lex:GetBuiltinIntent
+                                - lex:GetBuiltinIntents
+                                - lex:GetBuiltinSlotTypes
+                                - lex:GetBots
+                                - lex:GetBotVersions
+                                - lex:GetIntent
+                                - lex:GetIntents
+                                - lex:GetIntentVersions
+                                - lex:GetSlotType
+                                - lex:GetSlotTypes
+                                - lex:GetSlotTypeVersions
+                                - lex:GetUtterancesView
+                                - lex:PutBot
+                                - lex:PutBotAlias
+                                - lex:PutIntent
+                                - lex:PutSlotType
+                            Resource: "*"
+                - PolicyName: S3ReadWrite
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - s3:Get*
+                                - s3:Head*
+                                - s3:List*
+                                - s3:CreateMultipartUpload
+                                - s3:CompleteMultipartUpload
+                                - s3:AbortMultipartUpload
+                                - s3:CopyObject
+                                - s3:PutObject*
+                                - s3:DeleteObject*
+                                - s3:Upload*
+                            Resource:
+                                - !Sub "arn:aws:s3:::${ArtifactStore}"
+                                - !Sub "arn:aws:s3:::${ArtifactStore}/*"
+                                - !Sub "arn:aws:s3:::${WebAppBucket}"
+                                - !Sub "arn:aws:s3:::${WebAppBucket}/*"
+                                - !Sub "arn:aws:s3:::${WebAppBucketDashboard}"
+                                - !Sub "arn:aws:s3:::${WebAppBucketDashboard}/*"
+
+    CodeBuild:
+        Type: AWS::CodeBuild::Project
+        Properties:
+            Name: !GetAtt CleanStackName.CleanStackNameValue
+            Description: Used to build the Lex Bot and Web UI
+            ServiceRole: !GetAtt CodeBuildRole.Arn
+            TimeoutInMinutes: 30
+            Artifacts:
+                Type: CODEPIPELINE
+            Environment:
+                Type: LINUX_CONTAINER
+                Image: aws/codebuild/eb-nodejs-4.4.6-amazonlinux-64:2.1.3
+                ComputeType: BUILD_GENERAL1_LARGE
+                EnvironmentVariables:
+                    - Name: WEBAPP_BUCKET
+                      Value: !Ref WebAppBucket
+                    - Name: WEBAPP_BUCKET_DASHBOARD
+                      Value: !Ref WebAppBucketDashboard
+                    - Name: BOOTSTRAP_BUCKET_PATH
+                      Value: !Sub "${ArtifactStore}/customresources"
+                    - Name: AWS_DEFAULT_REGION
+                      Value: !Sub "${AWS::Region}"
+                    - Name: PARENT_ORIGIN
+                      Value: !Sub "https://${WebAppBucketDashboard.DomainName}"
+                    - Name: IFRAME_ORIGIN
+                      Value: !Sub "https://${WebAppBucket.DomainName}"
+
+            Source:
+                Type: CODEPIPELINE
+                BuildSpec: !Sub |
+                    version: 0.1
+                    phases:
+                        install:
+                            commands:
+                                - echo "INFO install cmds"
+                                - yum install zip -y
+                                - npm install -g n
+                                - n stable
+                                - npm update -g npm
+                        pre_build:
+                            commands:
+                                - echo "INFO pre_build cmds"
+                                - aws configure set region "$AWS_DEFAULT_REGION"
+                                # CodePipeline doesn't provide a functioning repo to CodeBuild
+                                # but we need a functioning repo to support git submodule update.
+                                # To resolve this we will clone the source repo.
+                                - rm -fr `ls -Ab` && git clone -b ${GitHubBranch} "https://${GitHubRepoOwner}:${GitHubToken}@github.com/${GitHubRepoOwner}/${GitHubRepo}.git" .
+                                - sed -i 's%https://github.com%https://${GitHubRepoOwner}:${GitHubToken}@github.com%g' .gitmodules
+                                - git submodule init
+                                - git submodule update
+                                - cd submodules/lex-web-ui && make install-deps
+                                - cd dashboard-app && make install-deps
+                                - cd LexAppBuilder && npm install
+                                - npm install
+                        build:
+                            commands:
+                                - echo "INFO build cmds"
+                                - pwd
+                                - env
+                                - node masterBuild.js --bootstrap-bucket ${ArtifactStore} --webapp-bucket ${WebAppBucket} --webapp-bucket-dashboard ${WebAppBucketDashboard} --botname ${CleanStackName.CleanStackNameValue} --model LexAppBuilder/model/TrackingBotModel.json --cognito-poolid ${CognitoIdentityPool} --region ${AWS::Region}
+                        post_build:
+                            commands:
+                                - echo "INFO post_build cmds"
+
+    CodePipeline:
+        Type: AWS::CodePipeline::Pipeline
+        DependsOn: CognitoIdentityPool
+        Properties:
+            Name: !GetAtt CleanStackName.CleanStackNameValue
+            ArtifactStore:
+                Type: S3
+                Location: !Ref ArtifactStore
+            RoleArn: !GetAtt CodePipelineRole.Arn
+            Stages:
+                - Name: Source
+                  Actions:
+                      - Name: GitHubRepo
+                        ActionTypeId:
+                          Category: Source
+                          Owner: ThirdParty
+                          Version: 1
+                          Provider: GitHub
+                        Configuration:
+                          Owner: !Ref GitHubRepoOwner
+                          Repo: !Ref GitHubRepo
+                          Branch: !Ref GitHubBranch
+                          OAuthToken: !Ref GitHubToken
+                        OutputArtifacts:
+                            - Name: SourceOutput
+                        RunOrder: 1
+                - Name: BuildDeploy
+                  Actions:
+                      - Name: BotAndWebUi
+                        InputArtifacts:
+                            - Name: SourceOutput
+                        ActionTypeId:
+                            Category: Build
+                            Owner: AWS
+                            Version: 1
+                            Provider: CodeBuild
+                        Configuration:
+                            ProjectName: !Ref CodeBuild
+                        RunOrder: 1
+                      - Name: AndroidApp
+                        InputArtifacts:
+                            - Name: SourceOutput
+                        ActionTypeId:
+                            Category: Build
+                            Owner: AWS
+                            Version: 1
+                            Provider: CodeBuild
+                        Configuration:
+                            ProjectName: !Ref CodeBuildAndroidApk
+                        RunOrder: 1
+
+    CodeBuildAndroidApk:
+        Type: AWS::CodeBuild::Project
+        Properties:
+            Name: !Sub "${AWS::StackName}AndroidApk"
+            Description: Used to build the Android app
+            Source:
+                Type: CODEPIPELINE
+                BuildSpec: !Sub |
+                  version: 0.1
+                  environment_variables:
+                    plaintext:
+                      ANDROID_HOME: /usr/local/android-sdk-linux
+                      ANDROID_VERSION: "23"
+                      ANDROID_TOOLS_VERSION: "25.0.2"
+                      OUTPUT_BUCKET: "${ArtifactStore}"
+                  phases:
+                    install:
+                      commands:
+                        - curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+                        - sudo apt-get install -y nodejs
+                        - npm install
+                        - android-accept-licenses.sh "android update sdk --no-ui --all --filter \"android-$ANDROID_VERSION,tools,platform-tools,build-tools-$ANDROID_TOOLS_VERSION,extra-android-m2repository\""
+                        - echo "y" | $ANDROID_HOME/tools/bin/sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
+                        - chmod +x TrackingBot-aws-my-sample-app-android/MySampleApp/gradlew
+                        - chmod +x buildAndroid.sh
+                        - chmod +x TrackingBot-aws-my-sample-app-android/MySampleApp/gradle/wrapper/gradle-wrapper.jar
+                        - cp LexAppBuilder/model/TrackingBotModel.json TrackingBot-aws-my-sample-app-android/MySampleApp/app/src/main/res/raw/trackingbotmodel.json
+                    build:
+                      commands:
+                        - node masterBuildAndroid.js --bootstrap-bucket ${ArtifactStore} --botname ${CleanStackName.CleanStackNameValue} --cognito-poolid ${CognitoIdentityPool} --region ${AWS::Region}
+                    post_build:
+                      commands:
+                        - pwd
+                        - aws s3 cp --acl public-read TrackingBot-aws-my-sample-app-android/MySampleApp/app/build/outputs/apk/app-debug.apk "s3://${!OUTPUT_BUCKET}/trackingbot.apk"
+                        - aws s3 cp --recursive TrackingBot-aws-my-sample-app-android/MySampleApp/app/build/outputs/apk/ "s3://${!OUTPUT_BUCKET}/builds/$(date +'%m-%d-%y-%T')-${!CODEBUILD_BUILD_ID}/"
+                  artifacts:
+                    files:
+                      - TrackingBot-aws-my-sample-app-android/MySampleApp/app/build/outputs/apk/*.apk
+                    discard-paths: yes
+            Artifacts:
+                Type: CODEPIPELINE
+            Environment:
+                Type: LINUX_CONTAINER
+                Image: aws/codebuild/android-java-8:24.4.1
+                ComputeType: BUILD_GENERAL1_SMALL
+            ServiceRole: !GetAtt CodeBuildRole.Arn
+            TimeoutInMinutes: 30
+            Tags:
+                - Key: Name
+                  Value: !Sub "${AWS::StackName} CodeBuild project"
+
+    CodePipelineRole:
+        Type: AWS::IAM::Role
+        Properties:
+            Path: /
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - Principal:
+                          Service:
+                              - codepipeline.amazonaws.com
+                      Effect: Allow
+                      Action:
+                          - sts:AssumeRole
+            Policies:
+                - PolicyName: S3ReadWrite
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - s3:Get*
+                                - s3:Head*
+                                - s3:List*
+                                - s3:CreateMultipartUpload
+                                - s3:CompleteMultipartUpload
+                                - s3:AbortMultipartUpload
+                                - s3:CopyObject
+                                - s3:PutObject*
+                                - s3:DeleteObject*
+                                - s3:Upload*
+                            Resource:
+                                - !Sub "arn:aws:s3:::${ArtifactStore}"
+                                - !Sub "arn:aws:s3:::${ArtifactStore}/*"
+                - PolicyName: CodeBuildStart
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - codebuild:BatchGetBuilds
+                                - codebuild:StartBuild
+                            Resource:
+                                - !GetAtt CodeBuild.Arn
+                                - !GetAtt CodeBuildAndroidApk.Arn
+
+    PipelineCleanup:
+        DependsOn: CodePipeline
+        Type: Custom::PipelineCleanup
+        Properties:
+            ServiceToken: !GetAtt PipelineCleanupFunction.Arn
+    PipelineCleanupFunction:
+        Type: AWS::Lambda::Function
+        Properties:
+            Handler: index.handler
+            Role: !GetAtt PipelineCleanupExecutionRole.Arn
+            Runtime: python2.7
+            Timeout: 300
+            Code:
+                ZipFile: !Sub |
+                    from __future__ import print_function
+                    import json
+                    import boto3
+                    import cfnresponse
+                    import time
+                    def handler(event, context):
+                        print(json.dumps(event))
+                        if (event["RequestType"] == "Delete"):
+                            try:
+                                deleteStack("${CleanStackName.CleanStackNameValue}LexAppStack")
+                                deleteS3Bucket("${ArtifactStore}")
+                                deleteS3Bucket("${WebAppBucket}")
+                                deleteS3Bucket("${WebAppBucketDashboard}")
+                            except Exception as e:
+                                print("Exception thrown: %s" % str(e))
+                                pass
+                        else:
+                            print("RequestType %s, nothing to do" % event["RequestType"])
+                        time.sleep(30)  # pause for CloudWatch logs
+                        print('Done')
+                        responseData={"Data":"OK"}
+                        try:
+                            cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData)
+                        except Exception as e:
+                            print("Exception thrown in cfnresponse: %s" % str(e))
+                            pass
+                    def deleteS3Bucket(bucketName):
+                        print("Deleting S3 Bucket %s" % bucketName)
+                        s3resource = boto3.resource('s3')
+                        bucket = s3resource.Bucket(bucketName)
+                        bucket.objects.delete()
+                        for version in bucket.object_versions.all():
+                            version.delete()
+                        bucket.delete()
+                    def deleteStack(stackName):
+                        print("Deleting stack %s" % stackName)
+                        client = boto3.client('cloudformation')
+                        response=client.describe_stacks(StackName=stackName)
+                        stackId=response["Stacks"][0]["StackId"]
+                        print("Unique stackId: %s" % stackId)
+                        client.delete_stack(StackName=stackId)
+                        print("Wait for stack DELETE to complete")
+                        waiter = client.get_waiter('stack_delete_complete')
+                        waiter.wait(StackName = stackId)
+    PipelineCleanupExecutionRole:
+        Type: AWS::IAM::Role
+        Properties:
+            Path: /
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - Principal:
+                          Service:
+                              - lambda.amazonaws.com
+                      Effect: Allow
+                      Action:
+                          - sts:AssumeRole
+            Policies:
+                - PolicyName: LogsForLambda
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - logs:CreateLogGroup
+                                - logs:CreateLogStream
+                                - logs:PutLogEvents
+                            Resource:
+                                - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+                                - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
+                - PolicyName: S3All
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - s3:*
+                            Resource:
+                                - !Sub "arn:aws:s3:::${ArtifactStore}"
+                                - !Sub "arn:aws:s3:::${ArtifactStore}/*"
+                                - !Sub "arn:aws:s3:::${WebAppBucket}"
+                                - !Sub "arn:aws:s3:::${WebAppBucket}/*"
+                                - !Sub "arn:aws:s3:::${WebAppBucketDashboard}"
+                                - !Sub "arn:aws:s3:::${WebAppBucketDashboard}/*"
+                - PolicyName: CognitoDeleteAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - cognito-identity:Delete*
+                                - cognito-identity:SetIdentityPoolRoles
+                            Resource:
+                                - !Sub "arn:aws:cognito-identity:${AWS::Region}:${AWS::AccountId}:*/*"
+                - PolicyName: IAMDeleteAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - iam:Delete*
+                            Resource:
+                                - !Sub "arn:aws:iam::${AWS::AccountId}:*"
+                - PolicyName: DynamoDBDeleteAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - dynamodb:Delete*
+                                - dynamodb:Describe*
+                            Resource:
+                                - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${CleanStackName.CleanStackNameValue}*"
+                - PolicyName: LambdaDeleteAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - lambda:DeleteFunction
+                                - lambda:InvokeFunction
+                                - lambda:RemovePermission
+                            Resource:
+                                - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:processBotInfo${CleanStackName.CleanStackNameValue}"
+                                - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*"
+                - PolicyName: CFDelete
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - cloudformation:DeleteStack
+                                - cloudformation:DescribeAccountLimits
+                                - cloudformation:DescribeChangeSet
+                                - cloudformation:DescribeStackEvents
+                                - cloudformation:DescribeStackResource
+                                - cloudformation:DescribeStackResources
+                                - cloudformation:DescribeStacks
+                                - cloudformation:ListChangeSets
+                                - cloudformation:ListStackResources
+                                - cloudformation:ListStacks
+                            Resource:
+                                - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${CleanStackName.CleanStackNameValue}*"
+                - PolicyName: LexAccessDelete
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - lex:DeleteBot
+                                - lex:DeleteBotAlias
+                                - lex:DeleteBotChannelAssociation
+                                - lex:DeleteIntent
+                                - lex:DeleteSlotType
+                                - lex:DeleteUtterances
+                                - lex:GetBot
+                                - lex:GetBotAlias
+                                - lex:GetBotAliases
+                                - lex:GetBotChannelAssociation
+                                - lex:GetBotChannelAssociations
+                                - lex:GetBuiltinIntent
+                                - lex:GetBuiltinIntents
+                                - lex:GetBuiltinSlotTypes
+                                - lex:GetBots
+                                - lex:GetBotVersions
+                                - lex:GetIntent
+                                - lex:GetIntents
+                                - lex:GetIntentVersions
+                                - lex:GetSlotType
+                                - lex:GetSlotTypes
+                                - lex:GetSlotTypeVersions
+                                - lex:GetUtterancesView
+                            Resource: "*"
+
+Outputs:
+    PipelineUrl:
+        Description: >
+            Monitor the pipeline URL to see when the application has been fully
+            built and deployed.
+        Value: !Sub "https://console.aws.amazon.com/codepipeline/home?region=${AWS::Region}#/view/${CodePipeline}"
+
+    WebAppDashboardUrl:
+        Value: !Sub "https://${WebAppBucketDashboard.DomainName}/index.html"
+        Description: URL of the web application dashboard
+
+    ApkUrl:
+        Description: Link to latest apk build of the Android app
+        Value: !Sub "https://${ArtifactStore.DomainName}/trackingbot.apk"

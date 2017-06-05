@@ -1,0 +1,160 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  This template constructs resources for use in a tracking-bot lex application.
+  IAM::Role, DynamoDB::Table (3), Lambda::Function, Dynamically generated list of lex resources
+
+Parameters:
+  BaseModelName:
+    Type: String
+    Description: Base name for the model
+    MinLength: 1
+    MaxLength: 100
+    AllowedPattern: '^[A-Za-z]+$'
+    ConstraintDescription: Alphabetic
+
+  S3CodeBucket:
+    Type: String
+    Description: S3 bucket name
+    Default: tracking-bot
+
+  CustomResourceCodeObject:
+    Type: String
+    Description: >
+        S3 object zip file containing Lambda custom resource functions
+
+  BotProcessorCodeObject:
+    Type: String
+    Description: >
+        S3 object zip file containing Lambda bot processing functions
+
+Resources:
+  lambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: "lambdaruntimepolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "dynamodb:DeleteItem"
+                  - "dynamodb:DescribeTable"
+                  - "dynamodb:GetItem"
+                  - "dynamodb:GetRecords"
+                  - "dynamodb:ListTables"
+                  - "dynamodb:PutItem"
+                  - "dynamodb:Query"
+                  - "dynamodb:Scan"
+                  - "dynamodb:UpdateItem"
+                Resource:
+                  - !Sub "arn:aws:dynamodb:*:*:table/${BaseModelName}-Attribute"
+                  - !Sub "arn:aws:dynamodb:*:*:table/${BaseModelName}-Raw"
+                  - !Sub "arn:aws:dynamodb:*:*:table/${BaseModelName}-Aggregate"
+              - Effect: "Allow"
+                Action: "logs:*"
+                Resource: "*"
+      RoleName: !Sub "${BaseModelName}LambdaRole"
+
+  attributeDynamoDBTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "userId"
+          AttributeType: "S"
+        -
+          AttributeName: "signup_time"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "userId"
+          KeyType: "HASH"
+        -
+          AttributeName: "signup_time"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "10"
+        WriteCapacityUnits: "10"
+      TableName: !Sub "${BaseModelName}-Attribute"
+
+  rawDynamoDBTable:
+    DependsOn: attributeDynamoDBTable
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "userId"
+          AttributeType: "S"
+        -
+          AttributeName: "reported_time"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "userId"
+          KeyType: "HASH"
+        -
+          AttributeName: "reported_time"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "10"
+        WriteCapacityUnits: "10"
+      TableName: !Sub "${BaseModelName}-Raw"
+
+  aggregateDynamoDBTable:
+    DependsOn: rawDynamoDBTable
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "userId"
+          AttributeType: "S"
+        -
+          AttributeName: "reported_time"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "userId"
+          KeyType: "HASH"
+        -
+          AttributeName: "reported_time"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "10"
+        WriteCapacityUnits: "10"
+      TableName: !Sub "${BaseModelName}-Aggregate"
+
+  lambdaFunction:
+    DependsOn: lambdaRole
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: S3CodeBucket
+        S3Key:
+          Ref: BotProcessorCodeObject
+      Description: "Runs lambda function for lex bot"
+      FunctionName: !Sub "processBotInfo${BaseModelName}"
+      Handler: !Sub "processBotInfo${BaseModelName}.lambda_handler"
+      Role: !GetAtt lambdaRole.Arn
+      Runtime: "python2.7"
+
+  lambdaPermission:
+    DependsOn: lambdaFunction
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:invokeFunction"
+      FunctionName: !Sub "processBotInfo${BaseModelName}"
+      Principal: lex.amazonaws.com
+      SourceArn: !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:*:*"
+

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="demo_mobile_analytics_button_text_size">12sp</dimen>
+    <dimen name="activity_text_border">1dp</dimen>
+    <dimen name="activity_button_height">45dp</dimen>
+    <dimen name="activity_intra_group_separation">10dp</dimen>
+</resources>

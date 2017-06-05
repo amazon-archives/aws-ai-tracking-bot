@@ -1,0 +1,56 @@
+/********************/
+/* GENERAL SETTINGS */
+/********************/
+body {
+    background-color: #FFFFFF;
+    font-size: 16px;
+    margin: 40px
+}
+
+h3 {
+    text-align: center;
+}
+
+p {
+    text-indent: 0px;
+}
+
+pre {
+    line-height: 50%;
+}
+
+#menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.clear {
+    clear: both;
+}
+
+/********************/
+/* EXPANDABLE LIST  */
+/********************/
+
+.collapsibleList li{
+    cursor:auto;
+}
+
+li.lastLevel{
+    list-style:none;
+    cursor:auto;
+}
+
+li.collapsibleListOpen{
+    line-height: 140%;
+    list-style-image:url('../img/button-open.png');
+    cursor:pointer;
+}
+
+li.collapsibleListClosed{
+    line-height: 140%;
+    list-style-image:url('../img/button-closed.png');
+    cursor:pointer;
+}
+
