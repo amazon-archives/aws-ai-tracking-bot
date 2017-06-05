@@ -44,6 +44,5 @@ site
 .project 
 .pydevproject
 dist
-build
 .gradle
 local.properties
