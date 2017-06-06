@@ -1,8 +1,5 @@
 package com.mysampleapp.demo.dynamodbontroller;
 
-
-//import com.amazonaws.mobile.models.nosql.AhaheartdasttestmobileDO;
-
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 import java.util.Map;
