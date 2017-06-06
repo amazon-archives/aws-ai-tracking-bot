@@ -2,12 +2,13 @@
   "name": "tracking-bot",
   "version": "1.0.0",
   "description": "a tracking bot example",
+  "license": "Amazon Software License",
   "main": "masterBuild.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "apache2",
+  "license": "Amazon Software License",
   "dependencies": {
     "aws-sdk": "^2.48.0",
     "minimist": "^1.2.0",

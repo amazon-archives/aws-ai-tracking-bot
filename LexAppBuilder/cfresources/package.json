@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {},
   "author": "",
-  "license": "ISC",
+  "license": "Amazon Software License",
   "dependencies": {
     "aws-sdk": "^2.48.0"
   }
