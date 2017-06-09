@@ -12,6 +12,13 @@ The dashboard-app provides a sample dashboard which makes use of the IFrame capa
 The contents of TrackingBotModel.json at src/assets/TrackingBotModel.json defines the model used by this
 dashboard app and the model injected into Lex using the LexAppBuilder.
 
+This application is based on [Vue.js](https://vuejs.org/). 
+
+* A component, Report.vue, was created which handles display of the dashboard. 
+* The LexWebUI is loaded into an IFrame in bot-loader-vue.js. 
+* App.vue is the primary entry point to the dashboard. 
+* main.js loads the application. 
+
 ## Build Setup
 
 ``` bash
