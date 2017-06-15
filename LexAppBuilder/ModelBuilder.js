@@ -133,8 +133,8 @@ function uploadYamlToS3(yaml, botName, s3bucket) {
   return new Promise(function (resolve, reject) {
     const s3 = new AWS.S3();
     const params = {
-      Bucket: s3bucket + '/artifacts',
-      Key: 'lex' + botName + '.yaml',
+      Bucket: s3bucket,
+      Key: 'artifacts/lex' + botName + '.yaml',
       Body: fs.createReadStream(yaml)
     };
 
