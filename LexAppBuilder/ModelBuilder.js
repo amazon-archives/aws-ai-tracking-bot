@@ -110,8 +110,8 @@ function buildFunctionZipInS3(botName, model, s3bucket, timestamp) {
 
     const s3 = new AWS.S3();
     const params = {
-      Bucket: s3bucket + '/artifacts',
-      Key: "processBotInfo" + botName + timestamp + ".zip",
+      Bucket: s3bucket,
+      Key: "artifacts/processBotInfo" + botName + timestamp + ".zip",
       Body: fs.createReadStream(localZipName)
     };
 
@@ -167,8 +167,8 @@ function buildCFCustomResourcesZipInS3(botName, s3bucket, timestamp) {
     const s3 = new AWS.S3();
 
     const params = {
-      Bucket: s3bucket + '/artifacts',
-      Key: "custom-resources" + timestamp + ".zip",
+      Bucket: s3bucket,
+      Key: "artifacts/custom-resources" + timestamp + ".zip",
       Body: fs.createReadStream(localZipName)
     };
 
