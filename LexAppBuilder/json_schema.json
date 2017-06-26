@@ -1,0 +1,285 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {},
+  "id": "http://example.com/example.json",
+  "properties": {
+    "bot": {
+      "id": "/properties/bot",
+      "properties": {
+        "abortStatement": {
+          "id": "/properties/bot/properties/abortStatement",
+          "type": "string"
+        },
+        "allowUserToClearMetrics": {
+          "id": "/properties/bot/properties/allowUserToClearMetrics",
+          "type": "string"
+        },
+        "categories": {
+          "id": "/properties/bot/properties/categories",
+          "items": {
+            "id": "/properties/bot/properties/categories/items",
+            "properties": {
+              "cancel": {
+                "id": "/properties/bot/properties/categories/items/properties/cancel",
+                "type": "string"
+              },
+              "confirmation": {
+                "id": "/properties/bot/properties/categories/items/properties/confirmation",
+                "type": "string"
+              },
+              "dailyTarget": {
+                "id": "/properties/bot/properties/categories/items/properties/dailyTarget",
+                "type": "string"
+              },
+              "date": {
+                "id": "/properties/bot/properties/categories/items/properties/date",
+                "properties": {
+                  "default": {
+                    "id": "/properties/bot/properties/categories/items/properties/date/properties/default",
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "id": "/properties/bot/properties/categories/items/properties/date/properties/prompt",
+                    "type": "string"
+                  },
+                  "type": {
+                    "id": "/properties/bot/properties/categories/items/properties/date/properties/type",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "default",
+                  "prompt",
+                  "type"
+                ],
+                "type": "object"
+              },
+              "description": {
+                "id": "/properties/bot/properties/categories/items/properties/description",
+                "type": "string"
+              },
+              "monthlyTarget": {
+                "id": "/properties/bot/properties/categories/items/properties/monthlyTarget",
+                "type": "string"
+              },
+              "name": {
+                "id": "/properties/bot/properties/categories/items/properties/name",
+                "type": "string"
+              },
+              "object": {
+                "id": "/properties/bot/properties/categories/items/properties/object",
+                "properties": {
+                  "default": {
+                    "id": "/properties/bot/properties/categories/items/properties/object/properties/default",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "id": "/properties/bot/properties/categories/items/properties/object/properties/prefix",
+                    "items": {
+                      "id": "/properties/bot/properties/categories/items/properties/object/properties/prefix/items",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "prompt": {
+                    "id": "/properties/bot/properties/categories/items/properties/object/properties/prompt",
+                    "type": "string"
+                  },
+                  "type": {
+                    "id": "/properties/bot/properties/categories/items/properties/object/properties/type",
+                    "type": "string"
+                  },
+                  "values": {
+                    "id": "/properties/bot/properties/categories/items/properties/object/properties/values",
+                    "items": {
+                      "id": "/properties/bot/properties/categories/items/properties/object/properties/values/items",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "default",
+                  "values",
+                  "prefix",
+                  "type",
+                  "prompt"
+                ],
+                "type": "object"
+              },
+              "qty": {
+                "id": "/properties/bot/properties/categories/items/properties/qty",
+                "properties": {
+                  "convertTo": {
+                    "id": "/properties/bot/properties/categories/items/properties/qty/properties/convertTo",
+                    "type": "string"
+                  },
+                  "default": {
+                    "id": "/properties/bot/properties/categories/items/properties/qty/properties/default",
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "id": "/properties/bot/properties/categories/items/properties/qty/properties/prefix",
+                    "items": {
+                      "id": "/properties/bot/properties/categories/items/properties/qty/properties/prefix/items",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "prompt": {
+                    "id": "/properties/bot/properties/categories/items/properties/qty/properties/prompt",
+                    "type": "string"
+                  },
+                  "type": {
+                    "id": "/properties/bot/properties/categories/items/properties/qty/properties/type",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "default",
+                  "prompt",
+                  "prefix",
+                  "type"
+                ],
+                "type": "object"
+              },
+              "units": {
+                "id": "/properties/bot/properties/categories/items/properties/units",
+                "properties": {
+                  "default": {
+                    "id": "/properties/bot/properties/categories/items/properties/units/properties/default",
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "id": "/properties/bot/properties/categories/items/properties/units/properties/prompt",
+                    "type": "string"
+                  },
+                  "type": {
+                    "id": "/properties/bot/properties/categories/items/properties/units/properties/type",
+                    "type": "string"
+                  },
+                  "values": {
+                    "id": "/properties/bot/properties/categories/items/properties/units/properties/values",
+                    "items": {},
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "values",
+                  "prompt",
+                  "type"
+                ],
+                "type": "object"
+              },
+              "verb": {
+                "id": "/properties/bot/properties/categories/items/properties/verb",
+                "properties": {
+                  "prefix": {
+                    "id": "/properties/bot/properties/categories/items/properties/verb/properties/prefix",
+                    "items": {
+                      "id": "/properties/bot/properties/categories/items/properties/verb/properties/prefix/items",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "prompt": {
+                    "id": "/properties/bot/properties/categories/items/properties/verb/properties/prompt",
+                    "type": "string"
+                  },
+                  "type": {
+                    "id": "/properties/bot/properties/categories/items/properties/verb/properties/type",
+                    "type": "string"
+                  },
+                  "values": {
+                    "id": "/properties/bot/properties/categories/items/properties/verb/properties/values",
+                    "items": {
+                      "id": "/properties/bot/properties/categories/items/properties/verb/properties/values/items",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "values",
+                  "prefix",
+                  "type",
+                  "prompt"
+                ],
+                "type": "object"
+              },
+              "weeklyTarget": {
+                "id": "/properties/bot/properties/categories/items/properties/weeklyTarget",
+                "type": "string"
+              }
+            },
+            "required": [
+              "confirmation",
+              "name",
+              "object",
+              "qty",
+              "date",
+              "verb",
+              "weeklyTarget",
+              "dailyTarget",
+              "units",
+              "monthlyTarget",
+              "cancel",
+              "description"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "clarificationPrompt": {
+          "id": "/properties/bot/properties/clarificationPrompt",
+          "type": "string"
+        },
+        "description": {
+          "id": "/properties/bot/properties/description",
+          "type": "string"
+        },
+        "name": {
+          "id": "/properties/bot/properties/name",
+          "type": "string"
+        },
+        "ui": {
+          "id": "/properties/bot/properties/ui",
+          "properties": {
+            "initialSpeechInstruction": {
+              "id": "/properties/bot/properties/ui/properties/initialSpeechInstruction",
+              "type": "string"
+            },
+            "initialText": {
+              "id": "/properties/bot/properties/ui/properties/initialText",
+              "type": "string"
+            },
+            "titleBar": {
+              "id": "/properties/bot/properties/ui/properties/titleBar",
+              "type": "string"
+            }
+          },
+          "required": [
+            "initialText",
+            "titleBar",
+            "initialSpeechInstruction"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "ui",
+        "name",
+        "allowUserToClearMetrics",
+        "abortStatement",
+        "clarificationPrompt",
+        "categories",
+        "description"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "bot"
+  ],
+  "type": "object"
+}
