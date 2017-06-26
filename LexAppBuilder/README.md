@@ -16,6 +16,12 @@ defines how the Lex Bot will be constructed. All elements are required at the pr
 validation is performed in masterBuild.js. An invalid model as detected by [jsonschema](https://www.npmjs.com/package/jsonschema) will
 result in a build failure. json_schema.json contains the schema used for validation. 
 
+A model can also be validated manually using the command:
+
+```
+node validate-model.js --model model/TrackingBotModel.json 
+```
+
 The outermost object in the model is "bot". The bot object defines configuration for the Lex Bot. 
 "name", "description", and the Bot's "clarificationPrompt" and "abortStatement" must be be defined. 
 These prompts are configured into the lex bot.

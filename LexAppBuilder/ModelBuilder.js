@@ -575,3 +575,20 @@ function enforceSyntax(a) {
   b = b.replace(/[\-]/g, 'k');
   return b;
 }
+
+exports.validateModel = function(modelFile) {
+  var data = {};
+  data = readModel(modelFile);
+  var schema = readModel("json_schema.json");
+
+  return new Promise(function (resolve, reject) {
+    const Validator = require('jsonschema').Validator;
+    const v = new Validator();
+    var result = v.validate(data, schema);
+    if (result.valid === false) {
+      reject (result);
+    } else {
+      resolve(result);
+    }
+  });
+}
