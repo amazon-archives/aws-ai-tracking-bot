@@ -12,7 +12,9 @@ a web client.
 
 ## Model
 The model used for the application is defined in model/TrackingBotModel.json. The model 
-defines how the Lex Bot will be constructed. All elements are required at the present time.
+defines how the Lex Bot will be constructed. All elements are required at the present time. Model 
+validation is performed in masterBuild.js. An invalid model as detected by [jsonschema](https://www.npmjs.com/package/jsonschema) will
+result in a build failure. json_schema.json contains the schema used for validation. 
 
 The outermost object in the model is "bot". The bot object defines configuration for the Lex Bot. 
 "name", "description", and the Bot's "clarificationPrompt" and "abortStatement" must be be defined. 
