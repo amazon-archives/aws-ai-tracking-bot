@@ -12,20 +12,24 @@ Parameters:
     Type: String
     Default: aws-ai-tracking-bot
     Description: The repo name of the sample service
+    MinLength: 1
 
   GitHubRepoOwner:
     Type: String
     Description: GitHub username of repo owner
+    MinLength: 1
 
   GitHubBranch:
     Type: String
     Default: master
     Description: The branch of the repo to continuously deploy
+    MinLength: 1
 
   GitHubToken:
     Type: String
     Description: >
       GitHub OAuth Token with access to the repo (https://github.com/settings/tokens)
+    MinLength: 1
 
 Metadata:
   AWS::CloudFormation::Interface:
