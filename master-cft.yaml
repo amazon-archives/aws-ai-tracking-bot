@@ -221,6 +221,7 @@ Resources:
                                 - dynamodb:GetItem
                                 - dynamodb:ListTables
                                 - dynamodb:Query
+                                - dynamodb:Scan
                             Resource:
                                 - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Attribute"
                                 - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Aggregate"
@@ -279,6 +280,7 @@ Resources:
                                 - lambda:GetFunctionConfiguration
                                 - lambda:GetFunction
                                 - lambda:UpdateFunctionCode
+                                - lambda:UpdateFunctionConfiguration
                                 - lambda:AddPermission
                             Resource: "*"
                 - PolicyName: IamCreateRoleAccess
