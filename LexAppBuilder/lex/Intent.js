@@ -60,8 +60,7 @@ Intent.prototype.setDescription = function (description) {
 
 Intent.prototype.delete = function (callback) {
   var params = {
-    "name": this.data.name,
-    "version": "$LATEST"
+    "name": this.data.name
   }
 
   var obj = this;
