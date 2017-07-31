@@ -14,32 +14,36 @@ License for the specific language governing permissions and limitations under th
 <template>
   <div class="report">
     <div class="charts" v-for="cat in model.bot.categories">
-      {{ cat.name }}
+      <button v-on:click="showData(`${cat.name}`)">{{ cat.name }}</button>
       <div v-bind:ref="`radial-chart-${cat.name}`" class="radial-chart" v-bind:id="`radial-chart-${cat.name}`">
       </div>
     </div>
-    <div class="instructions">
+    <div v-show="showInstructions" class="instructions">
       This sample dashboard displays results for the current day, the last seven days, and the last 30 days of tracking.
       The inner light blue arc shows percent of target for the current day. The middle light green arc shows percent
       of target for the last 7 days. The outer red arc shows percent of target the the last 30 days. The text seen
       in the middle of the chart shows the percent of target for the current day.
     </div>
+    <detail-chart v-show="showGraph" v-bind:title=this.category ref="detailChartChild"> </detail-chart>
   </div>
 </template>
 
 <script>
 
+import Vue from 'vue';
 import RadialProgressChart from 'radial-progress-chart';
 import moment from 'moment';
 import DynamoDb from 'aws-sdk/clients/dynamodb';
 import { VTooltip } from 'v-tooltip';
 import * as d3 from 'd3';
 import model from '../assets/TrackingBotModel.json';
+import StackedBar from './StackedBar';
 
 /* Stores RadialProgressChart instances to use on updates */
 const charts = {};
 
 VTooltip.options.defaultClass = 'my-tooltip';
+Vue.component('detail-chart', StackedBar);
 
 /* eslint-disable no-var, no-plusplus*/
 
@@ -134,18 +138,40 @@ function createChart(name, useDaily, useWeekly, useMonthly, data, tooltip) {
   }
 }
 
-/* eslint-disable no-new */
+
+/* eslint-disable no-new, no-alert*/
 export default {
   name: 'report',
   data() {
     return {
-      msg: 'Welcome to Your Report App',
+      awsCredentials: undefined,
+      category: undefined,
+      fromDate: undefined,
+      toDate: undefined,
+      contentData: undefined,
+      botName: undefined,
+      region: undefined,
+      showInstructions: true,
+      showGraph: false,
       model,
     };
   },
   mounted() {
   },
   methods: {
+    showData(category) {
+      this.category = category;
+      this.showInstructions = false;
+      this.showGraph = true;
+      return this.getReportedDetailData(this.awsCredentials, this.botName, this.region,
+        this.fromDate, this.toDate)
+        .then(data => this.parseDetailData(this.fromDate, this.toDate, data))
+        .then((contentData) => {
+          this.contentData = contentData;
+          const child = this.$refs.detailChartChild;
+          child.showStackedBar(this.fromDate, this.toDate, this.contentData);
+        });
+    },
     getTooltip(values) {
       /* eslint-disable prefer-template */
       var res = values.name + '</br>' +
@@ -163,6 +189,7 @@ export default {
       return res;
     },
     performUpdate(awscredentials, botName, region) {
+      this.showGraph = false;
       this.updateCharts(awscredentials, botName, region);
     },
     updateCharts(awscredentials, botName, region, fromDate = moment(), toDate = fromDate) {
@@ -172,6 +199,11 @@ export default {
       if (!fromDateMoment.isValid() || !toDateMoment.isValid()) {
         return Promise.reject(`updateChart invalid date: ${fromDate} ${toDate}`);
       }
+      this.awsCredentials = awscredentials;
+      this.fromDate = fromDateMoment;
+      this.toDate = toDateMoment;
+      this.botName = botName;
+      this.region = region;
       return this.getReportedData(awscredentials, botName, region, fromDateMoment, toDateMoment)
       .then(data => this.parseData(data))
       .then(() => {
@@ -213,6 +245,58 @@ export default {
       return new Promise((resolve, reject) => {
         docClient.query(
           query,
+          (error, data) => {
+            if (error) {
+              /* eslint-disable no-console */
+              console.error('dynamodb error:', error.message);
+              reject(`dynamodb error: ${error.message}`);
+            }
+            resolve(data);
+          },
+        );
+      });
+    },
+    getReportedDetailData(awscredentials, botName, awsregion, fromDateMoment, toDateMoment) {
+      const toDateMomentCalc = moment().utc().add(1, 'days');
+      if (!fromDateMoment.isValid() || !toDateMoment.isValid()) {
+        return Promise.reject(`invalid date: ${fromDateMoment} ${toDateMoment}`);
+      }
+      const awsCreds = awscredentials;
+      const docClient = new DynamoDb.DocumentClient({
+        region: awsregion,
+        credentials: awsCreds,
+      });
+      const userId = localStorage.getItem('cognitoid');
+      const params = {
+        TableName: `${botName}-Raw`,
+        KeyConditions: {
+          userId: {
+            ComparisonOperator: 'EQ',
+            AttributeValueList: [userId],
+          },
+          reported_time: {
+            ComparisonOperator: 'BETWEEN',
+            AttributeValueList: [
+              fromDateMoment.format('YYYY-MM-DD'),
+              toDateMoment.format('YYYY-MM-DD'),
+            ],
+          },
+        },
+        FilterExpression: '#day between :start_day and :end_day and (contains(#name, :category))',
+        ExpressionAttributeNames: {
+          '#day': 'dayPrefix',
+          '#name': 'intentName',
+        },
+        ExpressionAttributeValues: {
+          ':category': this.category,
+          ':start_day': fromDateMoment.format('YYYY-MM-DD'),
+          ':end_day': toDateMomentCalc.format('YYYY-MM-DD'),
+        },
+      };
+
+      return new Promise((resolve, reject) => {
+        docClient.scan(
+          params,
           (error, data) => {
             if (error) {
               /* eslint-disable no-console */
@@ -467,12 +551,79 @@ export default {
       }
       return Promise.resolve();
     },
+    parseDetailData(fromDate, toDate, data) {
+      const results = {};
+      results.datestringvalues = new Array(30);
+      results.seriesdata = {};
+      const now = moment();
+      for (let i = 0; i < data.Count; i++) {
+        results.seriesdata[data.Items[i].rawObject] = {};
+        results.seriesdata[data.Items[i].rawObject].series = new Array(30);
+        for (let x = 0; x < 30; x++) {
+          results.seriesdata[data.Items[i].rawObject].series[x] = 0;
+        }
+      }
+      let st = now.subtract(29, 'days');
+      for (let x = 0; x < 30; x++) {
+        results.datestringvalues[x] = st.format('YYYY-MM-DD');
+        st = st.add(1, 'days');
+      }
+      const start = moment(toDate);
+      for (let i = 0; i < data.Count; i++) {
+        const reported = moment(data.Items[i].dayPrefix);
+        const duration = moment.duration(start.diff(reported));
+        const days = Math.floor(duration.asDays());
+        const idx = 29 - days;
+        if (days >= 0) {
+          results.seriesdata[data.Items[i].rawObject].series[idx] += +data.Items[i].rawValue;
+        }
+      }
+      return Promise.resolve(results);
+    },
+    noDataDetailReportPresentation() {
+      var idx1;
+      for (idx1 = 0; idx1 < model.bot.categories.length; ++idx1) {
+        const categoryName = model.bot.categories[idx1].name;
+        var useDailyTarget = false;
+        var useWeeklyTarget = false;
+        var useMonthlyTarget = false;
+        if (model.bot.categories[idx1].dailyTarget > 0) {
+          useDailyTarget = true;
+        } else if (model.bot.categories[idx1].weeklyTarget > 0) {
+          useWeeklyTarget = true;
+        } else if (model.bot.categories[idx1].monthlyTarget > 0) {
+          useMonthlyTarget = true;
+        } else {
+          useDailyTarget = true;
+        }
+        const tooltipvalues = {};
+        tooltipvalues.name = categoryName;
+        if (useDailyTarget) {
+          tooltipvalues.dayValue = 0;
+          tooltipvalues.dayValueTarget = 0;
+          tooltipvalues.weeklyValue = 0;
+          tooltipvalues.weeklyValueTarget = 0;
+          tooltipvalues.monthlyValue = 0;
+          tooltipvalues.monthlyValueTarget = 0;
+        } else if (useWeeklyTarget) {
+          tooltipvalues.weeklyValue = 0;
+          tooltipvalues.weeklyValueTarget = 0;
+          tooltipvalues.monthlyValue = 0;
+          tooltipvalues.monthlyValueTarget = 0;
+        } else if (useMonthlyTarget) {
+          tooltipvalues.monthlyValue = 0;
+          tooltipvalues.monthlyValueTarget = 0;
+        }
+        createChart(model.bot.categories[idx1].name, useDailyTarget,
+          useWeeklyTarget, useMonthlyTarget, [0, 0, 0], this.getTooltip(tooltipvalues));
+      }
+      return Promise.resolve();
+    },
   },
 };
 
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 h1, h2 {
   font-weight: normal;

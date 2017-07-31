@@ -369,7 +369,7 @@ def putItemRaw(item):
 def appendRawInfo(userId, intentName, dayPrefix, rawValue, rawUnits, rawObject):
     item = {
         'userId': userId,
-        'reported_time': str(datetime.datetime.now().time()),
+        'reported_time': str(datetime.datetime.now()),
         'intentName': intentName,
         'dayPrefix': dayPrefix,
         'rawValue': rawValue,
