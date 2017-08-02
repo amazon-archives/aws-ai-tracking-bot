@@ -9,12 +9,16 @@ http://aws.amazon.com/asl/
 or in the "license" file accompanying this file. This file is distributed on an "AS IS"
 BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied. See the
 License for the specific language governing permissions and limitations under the License.
-*/
+ */
 
 <template>
   <div class="report">
     <div class="charts" v-for="cat in model.bot.categories">
-      <button v-on:click="showData(`${cat.name}`)">{{ cat.name }}</button>
+      <dropdown :closeAfterClick="true" align="left">
+        <div class="pulldown" slot="toggle">{{ cat.name }}<div class="arrow-down"></div></div>
+        <div v-on:click="showData(`${cat.name}`)"><label class="pulldown-label">30 day chart</label></div>
+        <div v-on:click="showDetailData(`${cat.name}`)"><label class="pulldown-label">Detail history</label></div>
+      </dropdown>
       <div v-bind:ref="`radial-chart-${cat.name}`" class="radial-chart" v-bind:id="`radial-chart-${cat.name}`">
       </div>
     </div>
@@ -24,7 +28,8 @@ License for the specific language governing permissions and limitations under th
       of target for the last 7 days. The outer red arc shows percent of target the the last 30 days. The text seen
       in the middle of the chart shows the percent of target for the current day.
     </div>
-    <detail-chart v-show="showGraph" v-bind:title=this.category ref="detailChartChild"> </detail-chart>
+    <detail-chart v-show="showGraph" v-bind:title="category" ref="detailChartChild"> </detail-chart>
+    <v-client-table v-show="showTable" :data="items" :columns="tableColumns" :options="tableOptions"></v-client-table>
   </div>
 </template>
 
@@ -32,6 +37,9 @@ License for the specific language governing permissions and limitations under th
 
 import Vue from 'vue';
 import RadialProgressChart from 'radial-progress-chart';
+import Dropdown from 'vueleton/lib/dropdown';
+import 'vueleton/lib/dropdown.css';
+import { ClientTable } from 'vue-tables-2';
 import moment from 'moment';
 import DynamoDb from 'aws-sdk/clients/dynamodb';
 import { VTooltip } from 'v-tooltip';
@@ -42,10 +50,17 @@ import StackedBar from './StackedBar';
 /* Stores RadialProgressChart instances to use on updates */
 const charts = {};
 
+/* eslint-disable no-new, no-alert, no-console */
+
 VTooltip.options.defaultClass = 'my-tooltip';
 Vue.component('detail-chart', StackedBar);
+Vue.component('dropdown', Dropdown);
+// Vue.component('v-client-table', ClientTable);
+Vue.use(ClientTable, {
+},
+);
 
-/* eslint-disable no-var, no-plusplus*/
+/* eslint-disable no-var, no-plusplus */
 
 /* Computes text value to use for center of radial chart
    This value will be updated as data for the radial chart is also
@@ -139,7 +154,7 @@ function createChart(name, useDaily, useWeekly, useMonthly, data, tooltip) {
 }
 
 
-/* eslint-disable no-new, no-alert*/
+/* eslint-disable no-new, no-alert, no-console */
 export default {
   name: 'report',
   data() {
@@ -149,20 +164,32 @@ export default {
       fromDate: undefined,
       toDate: undefined,
       contentData: undefined,
+      items: [],
       botName: undefined,
       region: undefined,
       showInstructions: true,
       showGraph: false,
+      showTable: false,
+      tableColumns: ['dayPrefix', 'rawValue', 'rawObject', 'rawUnits'],
+      tableOptions: {
+        perPage: 10,
+        headings: { dayPrefix: 'Date', rawValue: 'Amount', rawObject: 'Target', rawUnits: 'Units' },
+      },
       model,
     };
   },
   mounted() {
   },
   methods: {
+    /**
+     * Obtains data for the past 30 days to display in a stacked bar chart
+     * @param category - category from the model to display information about
+     */
     showData(category) {
       this.category = category;
       this.showInstructions = false;
       this.showGraph = true;
+      this.showTable = false;
       return this.getReportedDetailData(this.awsCredentials, this.botName, this.region,
         this.fromDate, this.toDate)
         .then(data => this.parseDetailData(this.fromDate, this.toDate, data))
@@ -170,6 +197,21 @@ export default {
           this.contentData = contentData;
           const child = this.$refs.detailChartChild;
           child.showStackedBar(this.fromDate, this.toDate, this.contentData);
+        });
+    },
+    /**
+     * Obtains data up to five years ago and displays in a table
+     * @param category - category from the model to display information about
+     */
+    showDetailData(category) {
+      this.category = category;
+      this.showInstructions = false;
+      this.showGraph = false;
+      return this.getReportedDetailData(this.awsCredentials, this.botName, this.region,
+        moment(this.toDate).subtract(1825, 'days'), this.toDate)
+        .then((contentData) => {
+          this.items = contentData.Items;
+          this.showTable = true;
         });
     },
     getTooltip(values) {
@@ -189,8 +231,12 @@ export default {
       return res;
     },
     performUpdate(awscredentials, botName, region) {
-      this.showGraph = false;
       this.updateCharts(awscredentials, botName, region);
+      if (this.showGraph) {
+        this.showData(this.category);
+      } else if (this.showTable) {
+        this.showDetailData(this.category);
+      }
     },
     updateCharts(awscredentials, botName, region, fromDate = moment(), toDate = fromDate) {
       const fromDateMoment = moment(fromDate).subtract(30, 'days');
@@ -724,5 +770,81 @@ table, th, td {
   opacity: .95;
 }
 
+.vl-dropdown-down .vl-dropdown-menu {
+  top: 100%;
+  margin-top: 0px;
+  margin-left: 20px;
+  width: 95px;
+  text-align: left;
+  background-color: lightyellow;
+}
+
+.pulldown {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.pulldown:hover {
+  background-color: skyblue;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.pulldown-label {
+
+}
+
+.pulldown-label:hover {
+  background-color: lightblue;
+}
+
+.arrow-down {
+  margin-left: 5px;
+  width: 0;
+  height: 0;
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid dimgray;
+}
+
+.VueTables {
+  margin-top: 25px;
+  margin-left: 25px;
+  width: 100%;
+}
+
+.table-responsive {
+  margin-top: 15px;
+}
+
+.table-responsive table {
+  width: 100%;
+}
+
+.table-responsive table th {
+  border-collapse: collapse;
+  border: 1px solid gray;
+  spacing: 5px;
+  text-align: left;
+  padding: 5px;
+  background-color: papayawhip;
+}
+
+.table-responsive table tr td {
+  border-collapse: collapse;
+  border: 1px solid gray;
+  spacing: 5px;
+  text-align: left;
+  padding: 5px;
+  background-color: papayawhip;
+}
+
+.VueTables thead tr:nth-child(2) th {
+  font-weight: normal;
+}
+
+.VueTables__sortable {
+  cursor: pointer;
+}
 
 </style>

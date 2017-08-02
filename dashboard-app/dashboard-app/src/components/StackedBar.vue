@@ -167,7 +167,7 @@ function createStackedBarChart(fromDate, toDate, contentData) {
     .call(yAxis);
 }
 
-/* eslint-disable no-new, no-alert*/
+/* eslint-disable no-new, no-alert */
 export default {
   name: 'StackedBar',
   data() {
