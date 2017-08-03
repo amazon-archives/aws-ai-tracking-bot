@@ -13,7 +13,7 @@ License for the specific language governing permissions and limitations under th
 
 <template>
   <div>
-    <label class="chartlabel"> {{ title }} - Details</label>
+    <div class="chartlabel"> {{ title }} - Details</div>
     <div id="stackedbar">
     </div>
   </div>
