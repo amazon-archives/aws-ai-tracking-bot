@@ -29,6 +29,7 @@ License for the specific language governing permissions and limitations under th
       in the middle of the chart shows the percent of target for the current day.
     </div>
     <detail-chart v-show="showGraph" v-bind:title="category" ref="detailChartChild"> </detail-chart>
+    <div v-show="showTable" class="chartlabel"> {{ category }} - History</div>
     <v-client-table v-show="showTable" :data="items" :columns="tableColumns" :options="tableOptions"></v-client-table>
   </div>
 </template>
@@ -828,6 +829,8 @@ table, th, td {
   text-align: left;
   padding: 5px;
   background-color: papayawhip;
+  font-family: 'Roboto', 'Myriad Set Pro', 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial;
+  font-size: 11pt;
 }
 
 .table-responsive table tr td {
@@ -837,6 +840,8 @@ table, th, td {
   text-align: left;
   padding: 5px;
   background-color: papayawhip;
+  font-family: 'Roboto', 'Myriad Set Pro', 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial;
+  font-size: 10pt;
 }
 
 .VueTables thead tr:nth-child(2) th {
@@ -847,4 +852,18 @@ table, th, td {
   cursor: pointer;
 }
 
+.VuePagination a {
+  font-family: 'Roboto', 'Myriad Set Pro', 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial;
+  font-size: 10pt;
+  color: #000000;
+  cursor: pointer;
+}
+
+.VueTables .row {
+  display: inline-flex;
+}
+
+.VueTables label {
+  margin-left: 10px;
+}
 </style>
