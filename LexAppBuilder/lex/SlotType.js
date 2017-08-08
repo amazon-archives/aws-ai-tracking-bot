@@ -108,8 +108,7 @@ SlotType.prototype.update = function (callback) {
 
 SlotType.prototype.delete = function (callback) {
   var params = {
-    "name": this.name,
-    "version": "$LATEST"
+    "name": this.name
   }
 
   var obj = this;

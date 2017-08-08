@@ -1,6 +1,7 @@
   LexSlotTypeLambda:
     Type: AWS::Lambda::Function
     Properties:
+      Description: "Version 1.1 of LexSlotType Custom Resource"
       Code:
         S3Bucket: !Ref S3CodeBucket
         S3Key: !Ref CustomResourceCodeObject
@@ -12,6 +13,7 @@
   LexIntentLambda:
     Type: AWS::Lambda::Function
     Properties:
+      Description: "Version 1.1 of LexIntent Custom Resource"
       Code:
         S3Bucket: !Ref S3CodeBucket
         S3Key: !Ref CustomResourceCodeObject
@@ -23,6 +25,7 @@
   LexBotLambda:
     Type: AWS::Lambda::Function
     Properties:
+      Description: "Version 1.1 of LexBot Custom Resource"
       Code:
         S3Bucket: !Ref S3CodeBucket
         S3Key: !Ref CustomResourceCodeObject

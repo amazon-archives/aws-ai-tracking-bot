@@ -87,6 +87,14 @@ if (model === undefined) {
   model = "LexAppBuilder/model/TrackingBotModel.json";
 }
 
+validateModel(model).then(function (result) {
+  console.info("Model validation complete");
+}, function (error) {
+  console.error("Invalid model detected");
+  process.exitCode = 1;
+  process.exit(process.exitCode);
+});
+
 /**
  * Copy TrackingBotModel to dashboard-app for use in the dashboard
  */
@@ -212,6 +220,33 @@ function copyFile(source, target) {
     }
     wr.on('finish', function() {wr.end(); wr.close(); resolve("success")});
     rd.pipe(wr);
+  });
+}
+
+function readModel(modelFile) {
+  try {
+    return(JSON.parse(fs.readFileSync(modelFile, 'utf8')));
+  } catch (e) {
+    logger.error(e);
+    return undefined;
+  }
+}
+
+function validateModel(model) {
+  var data = {};
+  data = readModel(model);
+  var schema = readModel("LexAppBuilder/json_schema.json");
+
+  return new Promise(function (resolve, reject) {
+    const Validator = require('jsonschema').Validator;
+    const v = new Validator();
+    var result = v.validate(data, schema);
+    if (result.valid === false) {
+      console.error("Model failed to validate: " + JSON.stringify(result.errors,null,2));
+      reject (result);
+    } else {
+      resolve(result);
+    }
   });
 }
 

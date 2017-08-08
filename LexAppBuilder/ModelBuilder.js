@@ -110,8 +110,8 @@ function buildFunctionZipInS3(botName, model, s3bucket, timestamp) {
 
     const s3 = new AWS.S3();
     const params = {
-      Bucket: s3bucket + '/artifacts',
-      Key: "processBotInfo" + botName + timestamp + ".zip",
+      Bucket: s3bucket,
+      Key: "artifacts/processBotInfo" + botName + timestamp + ".zip",
       Body: fs.createReadStream(localZipName)
     };
 
@@ -133,8 +133,8 @@ function uploadYamlToS3(yaml, botName, s3bucket) {
   return new Promise(function (resolve, reject) {
     const s3 = new AWS.S3();
     const params = {
-      Bucket: s3bucket + '/artifacts',
-      Key: 'lex' + botName + '.yaml',
+      Bucket: s3bucket,
+      Key: 'artifacts/lex' + botName + '.yaml',
       Body: fs.createReadStream(yaml)
     };
 
@@ -167,8 +167,8 @@ function buildCFCustomResourcesZipInS3(botName, s3bucket, timestamp) {
     const s3 = new AWS.S3();
 
     const params = {
-      Bucket: s3bucket + '/artifacts',
-      Key: "custom-resources" + timestamp + ".zip",
+      Bucket: s3bucket,
+      Key: "artifacts/custom-resources" + timestamp + ".zip",
       Body: fs.createReadStream(localZipName)
     };
 
@@ -574,4 +574,21 @@ function enforceSyntax(a) {
   b = b.replace(/[9]/g, 'j');
   b = b.replace(/[\-]/g, 'k');
   return b;
+}
+
+exports.validateModel = function(modelFile) {
+  var data = {};
+  data = readModel(modelFile);
+  var schema = readModel("json_schema.json");
+
+  return new Promise(function (resolve, reject) {
+    const Validator = require('jsonschema').Validator;
+    const v = new Validator();
+    var result = v.validate(data, schema);
+    if (result.valid === false) {
+      reject (result);
+    } else {
+      resolve(result);
+    }
+  });
 }

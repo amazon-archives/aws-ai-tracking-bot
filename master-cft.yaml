@@ -12,20 +12,24 @@ Parameters:
     Type: String
     Default: aws-ai-tracking-bot
     Description: The repo name of the sample service
+    MinLength: 1
 
   GitHubRepoOwner:
     Type: String
     Description: GitHub username of repo owner
+    MinLength: 1
 
   GitHubBranch:
     Type: String
     Default: master
     Description: The branch of the repo to continuously deploy
+    MinLength: 1
 
   GitHubToken:
     Type: String
     Description: >
       GitHub OAuth Token with access to the repo (https://github.com/settings/tokens)
+    MinLength: 1
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -217,6 +221,7 @@ Resources:
                                 - dynamodb:GetItem
                                 - dynamodb:ListTables
                                 - dynamodb:Query
+                                - dynamodb:Scan
                             Resource:
                                 - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Attribute"
                                 - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Aggregate"
@@ -275,6 +280,7 @@ Resources:
                                 - lambda:GetFunctionConfiguration
                                 - lambda:GetFunction
                                 - lambda:UpdateFunctionCode
+                                - lambda:UpdateFunctionConfiguration
                                 - lambda:AddPermission
                             Resource: "*"
                 - PolicyName: IamCreateRoleAccess

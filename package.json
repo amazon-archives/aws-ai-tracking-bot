@@ -8,9 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "Amazon Software License",
   "dependencies": {
     "aws-sdk": "^2.48.0",
+    "jsonschema": "^1.1.1",
     "minimist": "^1.2.0",
     "uuid-js": "^0.7.5"
   }

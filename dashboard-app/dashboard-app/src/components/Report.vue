@@ -9,39 +9,59 @@ http://aws.amazon.com/asl/
 or in the "license" file accompanying this file. This file is distributed on an "AS IS"
 BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied. See the
 License for the specific language governing permissions and limitations under the License.
-*/
+ */
 
 <template>
   <div class="report">
     <div class="charts" v-for="cat in model.bot.categories">
-      {{ cat.name }}
+      <dropdown :closeAfterClick="true" align="left">
+        <div class="pulldown" slot="toggle">{{ cat.name }}<div class="arrow-down"></div></div>
+        <div v-on:click="showData(`${cat.name}`)"><label class="pulldown-label">30 day chart</label></div>
+        <div v-on:click="showDetailData(`${cat.name}`)"><label class="pulldown-label">Detail history</label></div>
+      </dropdown>
       <div v-bind:ref="`radial-chart-${cat.name}`" class="radial-chart" v-bind:id="`radial-chart-${cat.name}`">
       </div>
     </div>
-    <div class="instructions">
+    <div v-show="showInstructions" class="instructions">
       This sample dashboard displays results for the current day, the last seven days, and the last 30 days of tracking.
       The inner light blue arc shows percent of target for the current day. The middle light green arc shows percent
       of target for the last 7 days. The outer red arc shows percent of target the the last 30 days. The text seen
       in the middle of the chart shows the percent of target for the current day.
     </div>
+    <detail-chart v-show="showGraph" v-bind:title="category" ref="detailChartChild"> </detail-chart>
+    <div v-show="showTable" class="chartlabel"> {{ category }} - History</div>
+    <v-client-table v-show="showTable" :data="items" :columns="tableColumns" :options="tableOptions"></v-client-table>
   </div>
 </template>
 
 <script>
 
+import Vue from 'vue';
 import RadialProgressChart from 'radial-progress-chart';
+import Dropdown from 'vueleton/lib/dropdown';
+import 'vueleton/lib/dropdown.css';
+import { ClientTable } from 'vue-tables-2';
 import moment from 'moment';
 import DynamoDb from 'aws-sdk/clients/dynamodb';
 import { VTooltip } from 'v-tooltip';
 import * as d3 from 'd3';
 import model from '../assets/TrackingBotModel.json';
+import StackedBar from './StackedBar';
 
 /* Stores RadialProgressChart instances to use on updates */
 const charts = {};
 
-VTooltip.options.defaultClass = 'my-tooltip';
+/* eslint-disable no-new, no-alert, no-console */
 
-/* eslint-disable no-var, no-plusplus*/
+VTooltip.options.defaultClass = 'my-tooltip';
+Vue.component('detail-chart', StackedBar);
+Vue.component('dropdown', Dropdown);
+// Vue.component('v-client-table', ClientTable);
+Vue.use(ClientTable, {
+},
+);
+
+/* eslint-disable no-var, no-plusplus */
 
 /* Computes text value to use for center of radial chart
    This value will be updated as data for the radial chart is also
@@ -134,18 +154,67 @@ function createChart(name, useDaily, useWeekly, useMonthly, data, tooltip) {
   }
 }
 
-/* eslint-disable no-new */
+
+/* eslint-disable no-new, no-alert, no-console */
 export default {
   name: 'report',
   data() {
     return {
-      msg: 'Welcome to Your Report App',
+      awsCredentials: undefined,
+      category: undefined,
+      fromDate: undefined,
+      toDate: undefined,
+      contentData: undefined,
+      items: [],
+      botName: undefined,
+      region: undefined,
+      showInstructions: true,
+      showGraph: false,
+      showTable: false,
+      tableColumns: ['dayPrefix', 'rawValue', 'rawObject', 'rawUnits'],
+      tableOptions: {
+        perPage: 10,
+        headings: { dayPrefix: 'Date', rawValue: 'Amount', rawObject: 'Target', rawUnits: 'Units' },
+      },
       model,
     };
   },
   mounted() {
   },
   methods: {
+    /**
+     * Obtains data for the past 30 days to display in a stacked bar chart
+     * @param category - category from the model to display information about
+     */
+    showData(category) {
+      this.category = category;
+      this.showInstructions = false;
+      this.showGraph = true;
+      this.showTable = false;
+      return this.getReportedDetailData(this.awsCredentials, this.botName, this.region,
+        this.fromDate, this.toDate)
+        .then(data => this.parseDetailData(this.fromDate, this.toDate, data))
+        .then((contentData) => {
+          this.contentData = contentData;
+          const child = this.$refs.detailChartChild;
+          child.showStackedBar(this.fromDate, this.toDate, this.contentData);
+        });
+    },
+    /**
+     * Obtains data up to five years ago and displays in a table
+     * @param category - category from the model to display information about
+     */
+    showDetailData(category) {
+      this.category = category;
+      this.showInstructions = false;
+      this.showGraph = false;
+      return this.getReportedDetailData(this.awsCredentials, this.botName, this.region,
+        moment(this.toDate).subtract(1825, 'days'), this.toDate)
+        .then((contentData) => {
+          this.items = contentData.Items;
+          this.showTable = true;
+        });
+    },
     getTooltip(values) {
       /* eslint-disable prefer-template */
       var res = values.name + '</br>' +
@@ -164,6 +233,11 @@ export default {
     },
     performUpdate(awscredentials, botName, region) {
       this.updateCharts(awscredentials, botName, region);
+      if (this.showGraph) {
+        this.showData(this.category);
+      } else if (this.showTable) {
+        this.showDetailData(this.category);
+      }
     },
     updateCharts(awscredentials, botName, region, fromDate = moment(), toDate = fromDate) {
       const fromDateMoment = moment(fromDate).subtract(30, 'days');
@@ -172,6 +246,11 @@ export default {
       if (!fromDateMoment.isValid() || !toDateMoment.isValid()) {
         return Promise.reject(`updateChart invalid date: ${fromDate} ${toDate}`);
       }
+      this.awsCredentials = awscredentials;
+      this.fromDate = fromDateMoment;
+      this.toDate = toDateMoment;
+      this.botName = botName;
+      this.region = region;
       return this.getReportedData(awscredentials, botName, region, fromDateMoment, toDateMoment)
       .then(data => this.parseData(data))
       .then(() => {
@@ -213,6 +292,58 @@ export default {
       return new Promise((resolve, reject) => {
         docClient.query(
           query,
+          (error, data) => {
+            if (error) {
+              /* eslint-disable no-console */
+              console.error('dynamodb error:', error.message);
+              reject(`dynamodb error: ${error.message}`);
+            }
+            resolve(data);
+          },
+        );
+      });
+    },
+    getReportedDetailData(awscredentials, botName, awsregion, fromDateMoment, toDateMoment) {
+      const toDateMomentCalc = moment().utc().add(1, 'days');
+      if (!fromDateMoment.isValid() || !toDateMoment.isValid()) {
+        return Promise.reject(`invalid date: ${fromDateMoment} ${toDateMoment}`);
+      }
+      const awsCreds = awscredentials;
+      const docClient = new DynamoDb.DocumentClient({
+        region: awsregion,
+        credentials: awsCreds,
+      });
+      const userId = localStorage.getItem('cognitoid');
+      const params = {
+        TableName: `${botName}-Raw`,
+        KeyConditions: {
+          userId: {
+            ComparisonOperator: 'EQ',
+            AttributeValueList: [userId],
+          },
+          reported_time: {
+            ComparisonOperator: 'BETWEEN',
+            AttributeValueList: [
+              fromDateMoment.format('YYYY-MM-DD'),
+              toDateMoment.format('YYYY-MM-DD'),
+            ],
+          },
+        },
+        FilterExpression: '#day between :start_day and :end_day and (contains(#name, :category))',
+        ExpressionAttributeNames: {
+          '#day': 'dayPrefix',
+          '#name': 'intentName',
+        },
+        ExpressionAttributeValues: {
+          ':category': this.category,
+          ':start_day': fromDateMoment.format('YYYY-MM-DD'),
+          ':end_day': toDateMomentCalc.format('YYYY-MM-DD'),
+        },
+      };
+
+      return new Promise((resolve, reject) => {
+        docClient.scan(
+          params,
           (error, data) => {
             if (error) {
               /* eslint-disable no-console */
@@ -467,12 +598,79 @@ export default {
       }
       return Promise.resolve();
     },
+    parseDetailData(fromDate, toDate, data) {
+      const results = {};
+      results.datestringvalues = new Array(30);
+      results.seriesdata = {};
+      const now = moment();
+      for (let i = 0; i < data.Count; i++) {
+        results.seriesdata[data.Items[i].rawObject] = {};
+        results.seriesdata[data.Items[i].rawObject].series = new Array(30);
+        for (let x = 0; x < 30; x++) {
+          results.seriesdata[data.Items[i].rawObject].series[x] = 0;
+        }
+      }
+      let st = now.subtract(29, 'days');
+      for (let x = 0; x < 30; x++) {
+        results.datestringvalues[x] = st.format('YYYY-MM-DD');
+        st = st.add(1, 'days');
+      }
+      const start = moment(toDate);
+      for (let i = 0; i < data.Count; i++) {
+        const reported = moment(data.Items[i].dayPrefix);
+        const duration = moment.duration(start.diff(reported));
+        const days = Math.floor(duration.asDays());
+        const idx = 29 - days;
+        if (days >= 0) {
+          results.seriesdata[data.Items[i].rawObject].series[idx] += +data.Items[i].rawValue;
+        }
+      }
+      return Promise.resolve(results);
+    },
+    noDataDetailReportPresentation() {
+      var idx1;
+      for (idx1 = 0; idx1 < model.bot.categories.length; ++idx1) {
+        const categoryName = model.bot.categories[idx1].name;
+        var useDailyTarget = false;
+        var useWeeklyTarget = false;
+        var useMonthlyTarget = false;
+        if (model.bot.categories[idx1].dailyTarget > 0) {
+          useDailyTarget = true;
+        } else if (model.bot.categories[idx1].weeklyTarget > 0) {
+          useWeeklyTarget = true;
+        } else if (model.bot.categories[idx1].monthlyTarget > 0) {
+          useMonthlyTarget = true;
+        } else {
+          useDailyTarget = true;
+        }
+        const tooltipvalues = {};
+        tooltipvalues.name = categoryName;
+        if (useDailyTarget) {
+          tooltipvalues.dayValue = 0;
+          tooltipvalues.dayValueTarget = 0;
+          tooltipvalues.weeklyValue = 0;
+          tooltipvalues.weeklyValueTarget = 0;
+          tooltipvalues.monthlyValue = 0;
+          tooltipvalues.monthlyValueTarget = 0;
+        } else if (useWeeklyTarget) {
+          tooltipvalues.weeklyValue = 0;
+          tooltipvalues.weeklyValueTarget = 0;
+          tooltipvalues.monthlyValue = 0;
+          tooltipvalues.monthlyValueTarget = 0;
+        } else if (useMonthlyTarget) {
+          tooltipvalues.monthlyValue = 0;
+          tooltipvalues.monthlyValueTarget = 0;
+        }
+        createChart(model.bot.categories[idx1].name, useDailyTarget,
+          useWeeklyTarget, useMonthlyTarget, [0, 0, 0], this.getTooltip(tooltipvalues));
+      }
+      return Promise.resolve();
+    },
   },
 };
 
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 h1, h2 {
   font-weight: normal;
@@ -573,5 +771,99 @@ table, th, td {
   opacity: .95;
 }
 
+.vl-dropdown-down .vl-dropdown-menu {
+  top: 100%;
+  margin-top: 0px;
+  margin-left: 20px;
+  width: 95px;
+  text-align: left;
+  background-color: lightyellow;
+}
 
+.pulldown {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.pulldown:hover {
+  background-color: skyblue;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.pulldown-label {
+
+}
+
+.pulldown-label:hover {
+  background-color: lightblue;
+}
+
+.arrow-down {
+  margin-left: 5px;
+  width: 0;
+  height: 0;
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid dimgray;
+}
+
+.VueTables {
+  margin-top: 25px;
+  margin-left: 25px;
+  width: 100%;
+}
+
+.table-responsive {
+  margin-top: 15px;
+}
+
+.table-responsive table {
+  width: 100%;
+}
+
+.table-responsive table th {
+  border-collapse: collapse;
+  border: 1px solid gray;
+  spacing: 5px;
+  text-align: left;
+  padding: 5px;
+  background-color: papayawhip;
+  font-family: 'Roboto', 'Myriad Set Pro', 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial;
+  font-size: 11pt;
+}
+
+.table-responsive table tr td {
+  border-collapse: collapse;
+  border: 1px solid gray;
+  spacing: 5px;
+  text-align: left;
+  padding: 5px;
+  background-color: papayawhip;
+  font-family: 'Roboto', 'Myriad Set Pro', 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial;
+  font-size: 10pt;
+}
+
+.VueTables thead tr:nth-child(2) th {
+  font-weight: normal;
+}
+
+.VueTables__sortable {
+  cursor: pointer;
+}
+
+.VuePagination a {
+  font-family: 'Roboto', 'Myriad Set Pro', 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial;
+  font-size: 10pt;
+  color: #000000;
+  cursor: pointer;
+}
+
+.VueTables .row {
+  display: inline-flex;
+}
+
+.VueTables label {
+  margin-left: 10px;
+}
 </style>
