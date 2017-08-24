@@ -156,19 +156,33 @@ Resources:
             VersioningConfiguration:
                 Status: Enabled
 
+    CognitoUserPool:
+        Type: AWS::Cognito::UserPool
+        DependsOn: CleanStackName
+        Properties:
+            UserPoolName: !Sub "${CleanStackName.CleanStackNameValue}CognitoUserPool"
+
     CognitoIdentityPool:
         Type: AWS::Cognito::IdentityPool
-        DependsOn: CleanStackName
+        DependsOn:
+            - CleanStackName
         Properties:
             IdentityPoolName: !Sub "${CleanStackName.CleanStackNameValue}CognitoPool"
             AllowUnauthenticatedIdentities: true
 
-    CognitoIdentityPoolSetRole:
+    CognitoIdentityPoolSetUnAuthRole:
         Type: AWS::Cognito::IdentityPoolRoleAttachment
         Properties:
             IdentityPoolId: !Ref CognitoIdentityPool
             Roles:
                 unauthenticated: !GetAtt CognitoUnauthRole.Arn
+
+    CognitoIdentityPoolSetAuthRole:
+        Type: AWS::Cognito::IdentityPoolRoleAttachment
+        Properties:
+            IdentityPoolId: !Ref CognitoIdentityPool
+            Roles:
+                authenticated: !GetAtt CognitoAuthRole.Arn
 
     CognitoUnauthRole:
         Type: AWS::IAM::Role
@@ -231,6 +245,74 @@ Resources:
                                         dynamodb:LeadingKeys:
                                             - "${cognito-identity.amazonaws.com:sub}"
 
+    CognitoAuthRole:
+        Type: AWS::IAM::Role
+        Properties:
+            Path: /
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - Principal:
+                          Federated: cognito-identity.amazonaws.com
+                      Effect: Allow
+                      Action:
+                          - sts:AssumeRoleWithWebIdentity
+                      Condition:
+                          StringEquals:
+                              cognito-identity.amazonaws.com:aud: !Ref CognitoIdentityPool
+            Policies:
+                - PolicyName: CognitoAuth
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - mobileanalytics:PutEvents
+                                - cognito-sync:*
+                                - cognito-identity:*
+                            Resource: '*'
+                - PolicyName: PollySynth
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - polly:SynthesizeSpeech
+                            Resource: '*'
+                - PolicyName: LexPost
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - lex:PostText
+                                - lex:PostContent
+                            Resource:
+                               - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:${CleanStackName.CleanStackNameValue}:*"
+
+                - PolicyName: DynamoDBAccess
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - dynamodb:BatchWriteItem
+                                - dynamodb:DeleteItem
+                                - dynamodb:PutItem
+                                - dynamodb:UpdateItem
+                                - dynamodb:DescribeTable
+                                - dynamodb:GetItem
+                                - dynamodb:ListTables
+                                - dynamodb:Query
+                                - dynamodb:Scan
+                            Resource:
+                                - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Attribute"
+                                - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Aggregate"
+                                - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*-Raw"
+                            Condition:
+                                ForAllValues:StringEquals:
+                                        dynamodb:LeadingKeys:
+                                            - "${cognito-identity.amazonaws.com:sub}"
 
     CodeBuildRole:
         Type: AWS::IAM::Role
