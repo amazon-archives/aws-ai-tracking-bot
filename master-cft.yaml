@@ -161,6 +161,10 @@ Resources:
         DependsOn: CleanStackName
         Properties:
             UserPoolName: !Sub "${CleanStackName.CleanStackNameValue}CognitoUserPool"
+            AutoVerifiedAttributes:
+              - "email"
+            MfaConfiguration: "OFF"
+
 
     CognitoUserPoolClient:
         Type: AWS::Cognito::UserPoolClient
@@ -1016,10 +1020,10 @@ Resources:
                             ClientName=stackName,
                             RefreshTokenValidity=1,
                             CallbackURLs=[
-                                'https://${WebAppBucketDashboard.DomainName}/loggedin',
+                                'https://${WebAppBucketDashboard.DomainName}/index.html/loggedin',
                             ],
                             LogoutURLs=[
-                                'https://${WebAppBucketDashboard.DomainName}/loggedout',
+                                'https://${WebAppBucketDashboard.DomainName}/index.html/loggedout',
                             ],
                             SupportedIdentityProviders=[
                                     'COGNITO',
