@@ -56,7 +56,6 @@ const charts = {};
 VTooltip.options.defaultClass = 'my-tooltip';
 Vue.component('detail-chart', StackedBar);
 Vue.component('dropdown', Dropdown);
-// Vue.component('v-client-table', ClientTable);
 Vue.use(ClientTable, {
 },
 );
@@ -182,6 +181,9 @@ export default {
   mounted() {
   },
   methods: {
+    setCredentials(credentials) {
+      this.awsCredentials = credentials;
+    },
     /**
      * Obtains data for the past 30 days to display in a stacked bar chart
      * @param category - category from the model to display information about
@@ -267,10 +269,9 @@ export default {
       if (!fromDateMoment.isValid() || !toDateMoment.isValid()) {
         return Promise.reject(`invalid date: ${fromDateMoment} ${toDateMoment}`);
       }
-      const awsCreds = awscredentials;
       const docClient = new DynamoDb.DocumentClient({
         region: awsregion,
-        credentials: awsCreds,
+        credentials: awscredentials,
       });
       const userId = localStorage.getItem('cognitoid');
       const query = {
@@ -308,33 +309,21 @@ export default {
       if (!fromDateMoment.isValid() || !toDateMoment.isValid()) {
         return Promise.reject(`invalid date: ${fromDateMoment} ${toDateMoment}`);
       }
-      const awsCreds = awscredentials;
       const docClient = new DynamoDb.DocumentClient({
         region: awsregion,
-        credentials: awsCreds,
+        credentials: awscredentials,
       });
       const userId = localStorage.getItem('cognitoid');
       const params = {
         TableName: `${botName}-Raw`,
-        KeyConditions: {
-          userId: {
-            ComparisonOperator: 'EQ',
-            AttributeValueList: [userId],
-          },
-          reported_time: {
-            ComparisonOperator: 'BETWEEN',
-            AttributeValueList: [
-              fromDateMoment.format('YYYY-MM-DD'),
-              toDateMoment.format('YYYY-MM-DD'),
-            ],
-          },
-        },
-        FilterExpression: '#day between :start_day and :end_day and (contains(#name, :category))',
+        FilterExpression: '#day between :start_day and :end_day and (contains(#name, :category) and (#userId = :userid))',
         ExpressionAttributeNames: {
           '#day': 'dayPrefix',
           '#name': 'intentName',
+          '#userId': 'userId',
         },
         ExpressionAttributeValues: {
+          ':userid': userId,
           ':category': this.category,
           ':start_day': fromDateMoment.format('YYYY-MM-DD'),
           ':end_day': toDateMomentCalc.format('YYYY-MM-DD'),
@@ -701,6 +690,10 @@ table, th, td {
     padding: 5px;
 }
 
+.report {
+  width: 75%;
+}
+
 .rbc-center-text {
  font-family: 'Roboto', 'Myriad Set Pro', 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial;
  fill: black;
@@ -775,7 +768,7 @@ table, th, td {
   top: 100%;
   margin-top: 0px;
   margin-left: 20px;
-  width: 95px;
+  width: 105px;
   text-align: left;
   background-color: lightyellow;
 }
@@ -819,7 +812,7 @@ table, th, td {
 }
 
 .table-responsive table {
-  width: 100%;
+  width: 90%;
 }
 
 .table-responsive table th {

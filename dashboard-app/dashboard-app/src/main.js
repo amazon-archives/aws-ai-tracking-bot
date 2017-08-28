@@ -15,16 +15,58 @@
 
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+
+/* eslint-disable no-new, no-console, no-unused-vars, prefer-template, prefer-arrow-callback, func-names */
+
 import Vue from 'vue';
 import { VTooltip } from 'v-tooltip';
+import VueCookies from 'vue-cookies';
+import AWS from 'aws-sdk';
 import App from './App';
 
 Vue.config.productionTip = false;
 Vue.directive('my-tooltip', VTooltip);
+Vue.use(VueCookies);
 
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  template: '<App/>',
-  components: { App },
+/**
+ * Set in index.html to drive multiple components
+ */
+const poolId = localStorage.getItem('poolid');
+const region = localStorage.getItem('awsregionname');
+const idtoken = localStorage.getItem('idtokenjwt');
+
+console.log('idtoken is: ' + idtoken);
+/**
+ * Initializes credentials
+ */
+function initCredentials() {
+  const credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: poolId,
+    Logins: {
+      'cognito-idp.us-east-1.amazonaws.com/us-east-1_K8EefyX8P': idtoken,
+    },
+  }, { region });
+  return credentials;
+}
+
+const credentials = initCredentials();
+
+credentials.getPromise().then(function () {
+  console.log('promise returned: ' + JSON.stringify(credentials, null, 2));
+  console.log('identityid: ' + credentials.identityId);
+  localStorage.setItem('cognitoid', credentials.identityId);
+  const awsConfig = new AWS.Config({ region, credentials });
+  const app = new Vue({
+    el: '#app',
+    template: '<App :awsconfig=awsconfig />',
+    components: {
+      App,
+    },
+    data: {
+      awsconfig: awsConfig,
+    },
+  });
+}, function (err) {
+  console.log('err: ' + err);
 });
+
