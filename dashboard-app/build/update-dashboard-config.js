@@ -83,8 +83,13 @@ Object.keys(configs)
   });
 });
 
+const defaultsStreamOpts = {
+  flags: 'w',
+  defaultEncoding: 'utf8',
+  autoClose: true
+};
 
-var stream = fs.createWriteStream("../dashboard-app/static/appconfig.js");
+var stream = fs.createWriteStream('./dashboard-app/static/appconfig.js',defaultsStreamOpts);
 stream.once('open', function(fd) {
   stream.write('var appUserPoolClientId = \'' + process.env.USER_POOL_CLIENT_ID + '\';\n');
   stream.write('var appIdentityPoolId = \'' + process.env.IDENTITY_POOL_ID + '\';\n');
