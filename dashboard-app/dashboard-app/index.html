@@ -16,8 +16,8 @@
     const token = localStorage.getItem('idtokenjwt');
     const rd1 = window.location.protocol + '//' + window.location.hostname + '/loggedin';
     const rd2 = window.location.protocol + '//' + window.location.hostname + '/loggedout';
-    console.log(rd1);
-    console.log(rd2);
+    console.log('redirect1: ' + rd1);
+    console.log('redirect2: ' + rd2);
     const authData = {
       ClientId: appUserPoolClientId, // Your client id here
       AppWebDomain: appDomainName,
