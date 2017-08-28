@@ -82,3 +82,13 @@ Object.keys(configs)
     console.log('[INFO] Config contents: ', JSON.stringify(item.conf));
   });
 });
+
+
+var stream = fs.createWriteStream("../dashboard-app/static/appconfig.js");
+stream.once('open', function(fd) {
+  stream.write('var appUserPoolClientId = \'' + process.env.USER_POOL_CLIENT_ID + '\';\n');
+  stream.write('var appIdentityPoolId = \'' + process.env.IDENTITY_POOL_ID + '\';\n');
+  stream.write('var appRegion = \'' + process.env.AWS_DEFAULT_REGION + '\';\n');
+  stream.write('var appDomainName = \'' + process.env.APP_DOMAIN_NAME + '\';\n');
+  stream.end();
+});
