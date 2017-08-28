@@ -162,27 +162,31 @@ Resources:
         Properties:
             UserPoolName: !Sub "${CleanStackName.CleanStackNameValue}CognitoUserPool"
 
+    CognitoUserPoolClient:
+        Type: AWS::Cognito::UserPoolClient
+        Properties:
+            ClientName: !Sub "${CleanStackName.CleanStackNameValue}CognitoUserPoolClient"
+            GenerateSecret: false
+            UserPoolId: !Ref CognitoUserPool
+
     CognitoIdentityPool:
         Type: AWS::Cognito::IdentityPool
-        DependsOn:
-            - CleanStackName
+        DependsOn: CognitoUserPool
         Properties:
             IdentityPoolName: !Sub "${CleanStackName.CleanStackNameValue}CognitoPool"
             AllowUnauthenticatedIdentities: true
+            CognitoIdentityProviders:
+                - ClientId: !Ref CognitoUserPoolClient
+                  ProviderName: !GetAtt CognitoUserPool.ProviderName
 
-    CognitoIdentityPoolSetUnAuthRole:
+    CognitoIdentityPoolSetRoles:
         Type: AWS::Cognito::IdentityPoolRoleAttachment
-        Properties:
-            IdentityPoolId: !Ref CognitoIdentityPool
-            Roles:
-                unauthenticated: !GetAtt CognitoUnauthRole.Arn
-
-    CognitoIdentityPoolSetAuthRole:
-        Type: AWS::Cognito::IdentityPoolRoleAttachment
+        DependsOn: CognitoIdentityPool
         Properties:
             IdentityPoolId: !Ref CognitoIdentityPool
             Roles:
                 authenticated: !GetAtt CognitoAuthRole.Arn
+                unauthenticated: !GetAtt CognitoUnauthRole.Arn
 
     CognitoUnauthRole:
         Type: AWS::IAM::Role
@@ -202,7 +206,7 @@ Resources:
                           ForAnyValue:StringLike:
                               cognito-identity.amazonaws.com:amr: unauthenticated
             Policies:
-                - PolicyName: PollySynth
+                - PolicyName: PollySynthUnauth
                   PolicyDocument:
                       Version: 2012-10-17
                       Statement:
@@ -210,7 +214,7 @@ Resources:
                             Action:
                                 - polly:SynthesizeSpeech
                             Resource: '*'
-                - PolicyName: LexPost
+                - PolicyName: LexPostUnauth
                   PolicyDocument:
                       Version: 2012-10-17
                       Statement:
@@ -221,7 +225,7 @@ Resources:
                             Resource:
                                - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:${CleanStackName.CleanStackNameValue}:*"
 
-                - PolicyName: DynamoDBAccess
+                - PolicyName: DynamoDBAccessUnauth
                   PolicyDocument:
                       Version: 2012-10-17
                       Statement:
@@ -271,7 +275,7 @@ Resources:
                                 - cognito-sync:*
                                 - cognito-identity:*
                             Resource: '*'
-                - PolicyName: PollySynth
+                - PolicyName: PollySynthAuth
                   PolicyDocument:
                       Version: 2012-10-17
                       Statement:
@@ -279,7 +283,7 @@ Resources:
                             Action:
                                 - polly:SynthesizeSpeech
                             Resource: '*'
-                - PolicyName: LexPost
+                - PolicyName: LexPostAuth
                   PolicyDocument:
                       Version: 2012-10-17
                       Statement:
@@ -290,7 +294,7 @@ Resources:
                             Resource:
                                - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:${CleanStackName.CleanStackNameValue}:*"
 
-                - PolicyName: DynamoDBAccess
+                - PolicyName: DynamoDBAccessAuth
                   PolicyDocument:
                       Version: 2012-10-17
                       Statement:
@@ -491,6 +495,12 @@ Resources:
                       Value: !Sub "https://${WebAppBucketDashboard.DomainName}"
                     - Name: IFRAME_ORIGIN
                       Value: !Sub "https://${WebAppBucket.DomainName}"
+                    - Name: USER_POOL_CLIENT_ID
+                      Value: !Sub "${CognitoUserPoolClient}"
+                    - Name: IDENTITY_POOL_ID
+                      Value: !Sub "${CognitoIdentityPool}"
+                    - Name: APP_DOMAIN_NAME
+                      Value: !Sub "${CleanStackName.CleanStackNameValue}${AWS::AccountId}.auth.${AWS::Region}.amazoncognito.com"
 
             Source:
                 Type: CODEPIPELINE
@@ -864,6 +874,165 @@ Resources:
                                 - lex:GetUtterancesView
                             Resource: "*"
 
+    CognitoUserPoolDomain:
+        DependsOn: CognitoIdentityPool
+        Type: Custom::CognitouserPoolDomain
+        Properties:
+            ServiceToken: !GetAtt CognitoUserPoolDomainFunction.Arn
+    CognitoUserPoolDomainFunction:
+        Type: AWS::Lambda::Function
+        Properties:
+            Handler: index.handler
+            Role: !GetAtt CognitoUserPoolDomainExecutionRole.Arn
+            Runtime: python2.7
+            Timeout: 300
+            Code:
+                ZipFile: !Sub |
+                    from __future__ import print_function
+                    import json
+                    import boto3
+                    import cfnresponse
+                    import time
+                    def handler(event, context):
+                        print(json.dumps(event))
+                        if (event["RequestType"] == "Delete"):
+                            try:
+                                deleteDomain("${CleanStackName.CleanStackNameValue}${AWS::AccountId}")
+                            except Exception as e:
+                                print("Exception thrown: %s" % str(e))
+                                pass
+                        elif (event["RequestType"] == "Create"):
+                            try:
+                                createDomain("${CleanStackName.CleanStackNameValue}${AWS::AccountId}")
+                            except Exception as e:
+                                print("Exception thrown: %s" % str(e))
+                                pass
+                        else:
+                            print("RequestType %s, nothing to do" % event["RequestType"])
+                        time.sleep(30)  # pause for CloudWatch logs
+                        print('Done')
+                        responseData={"Data":"OK"}
+                        try:
+                            cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData)
+                        except Exception as e:
+                            print("Exception thrown in cfnresponse: %s" % str(e))
+                            pass
+                    def deleteDomain(stackName):
+                        print("Deleting domain %s" % stackName)
+                        client = boto3.client('cognito-idp')
+                        response = client.delete_user_pool_domain(
+                            Domain=stackName,
+                            UserPoolId='${CognitoUserPool}'
+                        )
+                    def createDomain(stackName):
+                        print("Creating domain %s" % stackName)
+                        client = boto3.client('cognito-idp')
+                        response = client.create_user_pool_domain(
+                            Domain=stackName,
+                            UserPoolId='${CognitoUserPool}'
+                        )
+
+    CognitoUserPoolDomainExecutionRole:
+        Type: AWS::IAM::Role
+        Properties:
+            Path: /
+            AssumeRolePolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    - Principal:
+                          Service:
+                              - lambda.amazonaws.com
+                      Effect: Allow
+                      Action:
+                          - sts:AssumeRole
+            Policies:
+                - PolicyName: LogsForLambda
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - logs:CreateLogGroup
+                                - logs:CreateLogStream
+                                - logs:PutLogEvents
+                            Resource:
+                                - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+                                - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
+                - PolicyName: CognitoAuth
+                  PolicyDocument:
+                      Version: 2012-10-17
+                      Statement:
+                          - Effect: Allow
+                            Action:
+                                - cognito-sync:*
+                                - cognito-identity:*
+                                - cognito-idp:*
+                            Resource:
+                                - !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:*/*"
+
+    CognitoUserPoolUpdates:
+        DependsOn: CognitoIdentityPool
+        Type: Custom::CognitoUserPoolUpdates
+        Properties:
+            ServiceToken: !GetAtt CognitoUserPoolUpdatesFunction.Arn
+    CognitoUserPoolUpdatesFunction:
+        Type: AWS::Lambda::Function
+        Properties:
+            Handler: index.handler
+            Role: !GetAtt CognitoUserPoolDomainExecutionRole.Arn
+            Runtime: python2.7
+            Timeout: 300
+            Code:
+                ZipFile: !Sub |
+                    from __future__ import print_function
+                    import json
+                    import boto3
+                    import cfnresponse
+                    import time
+                    def handler(event, context):
+                        print(json.dumps(event))
+                        if (event["RequestType"] == "Create"):
+                            try:
+                                updatePool("${CleanStackName.CleanStackNameValue}")
+                            except Exception as e:
+                                print("Exception thrown: %s" % str(e))
+                                pass
+                        else:
+                            print("RequestType %s, nothing to do" % event["RequestType"])
+                        time.sleep(30)  # pause for CloudWatch logs
+                        print('Done')
+                        responseData={"Data":"OK"}
+                        try:
+                            cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData)
+                        except Exception as e:
+                            print("Exception thrown in cfnresponse: %s" % str(e))
+                            pass
+                    def updatePool(stackName):
+                        print("Updating Pool domain %s" % stackName)
+                        client = boto3.client('cognito-idp')
+                        response = client.update_user_pool_client(
+                            UserPoolId='${CognitoUserPool}',
+                            ClientId='${CognitoUserPoolClient}',
+                            ClientName=stackName,
+                            RefreshTokenValidity=1,
+                            CallbackURLs=[
+                                'https://${WebAppBucketDashboard.DomainName}/loggedin',
+                            ],
+                            LogoutURLs=[
+                                'https://${WebAppBucketDashboard.DomainName}/loggedout',
+                            ],
+                            SupportedIdentityProviders=[
+                                    'COGNITO',
+                            ],
+                            AllowedOAuthFlows=[
+                                'code', 'implicit'
+                            ],
+                            AllowedOAuthScopes=[
+                                'phone', 'email', 'openid', 'profile'
+                            ],
+                            AllowedOAuthFlowsUserPoolClient=True
+                        )
+
 Outputs:
     PipelineUrl:
         Description: >
@@ -878,3 +1047,11 @@ Outputs:
     ApkUrl:
         Description: Link to latest apk build of the Android app
         Value: !Sub "https://${ArtifactStore.DomainName}/trackingbot.apk"
+
+    UserPoolId:
+        Description: The user pool id
+        Value: !Ref CognitoUserPool
+
+    UserPoolClientId:
+        Description: The user pool client id
+        Value: !Ref CognitoUserPoolClient
