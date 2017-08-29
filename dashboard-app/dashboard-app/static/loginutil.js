@@ -46,9 +46,12 @@ if (curUrl.indexOf('home') >= 0) {
     console.log('goto home');
   }
 } else if (curUrl.indexOf('loggedin') >= 0) {
-  auth.parseCognitoWebResponse(curUrl);
+  const values = curUrl.split('?');
+  const minurl = '/' + values[1];
+  auth.parseCognitoWebResponse(minurl);
   const idToken = auth.getSignInUserSession().getIdToken();
   localStorage.setItem('idtokenjwt', idToken.getJwtToken());
+  localStorage.setItem('poolname', appUserPoolName);
   window.location.href = 'index.html?home';
 } else if (curUrl.indexOf('loggedout') >= 0) {
   console.log('logout complete');

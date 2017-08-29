@@ -34,6 +34,7 @@ Vue.use(VueCookies);
 const poolId = localStorage.getItem('poolid');
 const region = localStorage.getItem('awsregionname');
 const idtoken = localStorage.getItem('idtokenjwt');
+const poolName = localStorage.getItem('poolname');
 
 console.log('idtoken is: ' + idtoken);
 /**
@@ -43,9 +44,9 @@ function initCredentials() {
   const credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: poolId,
     Logins: {
-      'cognito-idp.us-east-1.amazonaws.com/us-east-1_K8EefyX8P': idtoken,
     },
   }, { region });
+  credentials.Logins[poolName] = idtoken;
   return credentials;
 }
 

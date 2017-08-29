@@ -501,6 +501,8 @@ Resources:
                       Value: !Sub "https://${WebAppBucket.DomainName}"
                     - Name: USER_POOL_CLIENT_ID
                       Value: !Sub "${CognitoUserPoolClient}"
+                    - Name: USER_POOL_NAME
+                      Value: !Sub "${CognitoUserPool.ProviderName}"
                     - Name: IDENTITY_POOL_ID
                       Value: !Sub "${CognitoIdentityPool}"
                     - Name: APP_DOMAIN_NAME
@@ -1020,10 +1022,10 @@ Resources:
                             ClientName=stackName,
                             RefreshTokenValidity=1,
                             CallbackURLs=[
-                                'https://${WebAppBucketDashboard.DomainName}/index.html/loggedin',
+                                'https://${WebAppBucketDashboard.DomainName}/index.html?loggedin',
                             ],
                             LogoutURLs=[
-                                'https://${WebAppBucketDashboard.DomainName}/index.html/loggedout',
+                                'https://${WebAppBucketDashboard.DomainName}/index.html?loggedout',
                             ],
                             SupportedIdentityProviders=[
                                     'COGNITO',

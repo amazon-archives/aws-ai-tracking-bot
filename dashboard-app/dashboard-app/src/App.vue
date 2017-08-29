@@ -46,6 +46,7 @@ Vue.use(Vuex);
 const poolId = localStorage.getItem('poolid');
 const region = localStorage.getItem('awsregionname');
 const idtoken = localStorage.getItem('idtokenjwt');
+const poolName = localStorage.getItem('poolname');
 
 const config = {
   cognito: { poolId },
@@ -56,9 +57,10 @@ const config = {
 const credentials = new AWS.CognitoIdentityCredentials({
   IdentityPoolId: poolId,
   Logins: {
-    'cognito-idp.us-east-1.amazonaws.com/us-east-1_K8EefyX8P': idtoken,
   },
 }, { region });
+credentials.Logins[poolName] = idtoken;
+
 const localConfig = new AWS.Config({ region, credentials });
 const store = new Vuex.Store(LexWebUiStore);
 const lexRuntimeClient = new LexRuntime(localConfig);

@@ -95,5 +95,6 @@ stream.once('open', function(fd) {
   stream.write('var appIdentityPoolId = \'' + process.env.IDENTITY_POOL_ID + '\';\n');
   stream.write('var appRegion = \'' + process.env.AWS_DEFAULT_REGION + '\';\n');
   stream.write('var appDomainName = \'' + process.env.APP_DOMAIN_NAME + '\';\n');
+  stream.write('var appUserPoolName = \'' + process.env.USER_POOL_NAME + '\';\n');
   stream.end();
 });
