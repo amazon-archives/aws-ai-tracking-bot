@@ -46,7 +46,7 @@
     };
 
     const curUrl = window.location.href;
-    if (curUrl.indexOf('/home') >= 0) {
+    if (curUrl.indexOf('home') >= 0) {
       if (token === null || token === undefined) {
         auth.getSession();
       } else {
@@ -56,11 +56,11 @@
       auth.parseCognitoWebResponse(curUrl);
       const idToken = auth.getSignInUserSession().getIdToken();
       localStorage.setItem('idtokenjwt', idToken.getJwtToken());
-      window.location.href = '/home';
+      window.location.href = 'index.html?home';
     } else if (curUrl.indexOf('loggedout') >= 0) {
       console.log('logout complete');
-      window.location.href = '/home';
-    } else if (curUrl.indexOf('/dosignout') >= 0) {
+      window.location.href = 'index.html?home';
+    } else if (curUrl.indexOf('index.html?dosignout') >= 0) {
       logout();
     } else {
       auth.getSession();
