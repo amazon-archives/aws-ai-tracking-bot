@@ -164,7 +164,12 @@ Resources:
             AutoVerifiedAttributes:
               - "email"
             MfaConfiguration: "OFF"
-
+            AliasAttributes:
+              - "email"
+            Schema:
+                - AttributeDataType: String
+                  Name: "email"
+                  Required: true
 
     CognitoUserPoolClient:
         Type: AWS::Cognito::UserPoolClient
@@ -1054,10 +1059,3 @@ Outputs:
         Description: Link to latest apk build of the Android app
         Value: !Sub "https://${ArtifactStore.DomainName}/trackingbot.apk"
 
-    UserPoolId:
-        Description: The user pool id
-        Value: !Ref CognitoUserPool
-
-    UserPoolClientId:
-        Description: The user pool client id
-        Value: !Ref CognitoUserPoolClient
