@@ -54,12 +54,13 @@ const config = {
   ui: { toolbarLogo: '', toolbarTitle: 'Resolutions' },
 };
 
+
+const logins = {};
+logins[poolName] = idtoken;
 const credentials = new AWS.CognitoIdentityCredentials({
   IdentityPoolId: poolId,
-  Logins: {
-  },
+  Logins: logins,
 }, { region });
-credentials.Logins[poolName] = idtoken;
 
 const localConfig = new AWS.Config({ region, credentials });
 const store = new Vuex.Store(LexWebUiStore);

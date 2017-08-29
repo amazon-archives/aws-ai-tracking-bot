@@ -41,12 +41,12 @@ console.log('idtoken is: ' + idtoken);
  * Initializes credentials
  */
 function initCredentials() {
+  const logins = {};
+  logins[poolName] = idtoken;
   const credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: poolId,
-    Logins: {
-    },
+    Logins: logins,
   }, { region });
-  credentials.Logins[poolName] = idtoken;
   return credentials;
 }
 
