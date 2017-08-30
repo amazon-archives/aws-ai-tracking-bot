@@ -1,7 +1,7 @@
 {
-  "iframeOrigin": "http://localhost:8080",
+  "iframeOrigin": "https://resolutionsdev-webappbucket-192qhdx0xkgy1.s3.amazonaws.com",
   "aws": {
-    "cognitoPoolId": "us-east-1:fe3d87be-c2ad-467f-a59e-f477bf0cacde",
+    "cognitoPoolId": "us-east-1:df561ece-1259-4628-8c2f-e9443fb15746",
     "region": "us-east-1",
     "botName": "resolutionsdev"
   },

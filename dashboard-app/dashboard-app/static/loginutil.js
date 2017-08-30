@@ -7,6 +7,7 @@ const region = appRegion;
 localStorage.setItem('poolid', poolid);
 localStorage.setItem('awsregionname', region);
 const token = localStorage.getItem('idtokenjwt');
+const noauth = localStorage.getItem('noauth');
 const rd1 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedin';
 const rd2 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedout';
 const authData = {
@@ -22,9 +23,12 @@ const authData = {
 const auth = new CognitoAuth(authData);
 
 function logout() {
-  console.log('do logout');
   localStorage.removeItem('idtokenjwt');
-  auth.signOut();
+  if (noauth === 'true') {
+    window.location.href = 'indexnoauth.html';
+  } else {
+    auth.signOut();
+  }
 }
 
 auth.userhandler = {
@@ -65,7 +69,11 @@ if (curUrl.indexOf('home') >= 0) {
   localStorage.removeItem('noauth');
   localStorage.removeItem('idtokenjwt');
   localStorage.removeItem('cognitoid');
-  window.location.href = 'index.html';
+  if (noauth === 'true') {
+    window.location.href = 'indexnoauth.html';
+  } else {
+    window.location.href = 'index.html';
+  }
 } else if (curUrl.indexOf('index.html?dosignout') >= 0) {
   logout();
 } else if (token) {

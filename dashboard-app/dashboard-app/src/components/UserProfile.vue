@@ -15,7 +15,7 @@ License for the specific language governing permissions and limitations under th
   <div>
     <div class="username">
       {{ username }}
-      <v-button>logout</v-button>
+      <v-btn v-on:click.native="logout();" round primary dark small>logout</v-btn>
     </div>
   </div>
 </template>
@@ -23,11 +23,12 @@ License for the specific language governing permissions and limitations under th
 <script>
 
 import Vue from 'vue';
-import VueButton from 'vue-button';
+import Vuetify from 'vuetify';
 
-Vue.component('v-button', VueButton);
+Vue.use(Vuetify);
 
-/* eslint-disable no-new, no-alert */
+/* eslint-disable no-new, no-alert, no-console, func-names, no-unused-vars, object-shorthand */
+
 export default {
   name: 'UserProfile',
   data() {
@@ -38,6 +39,9 @@ export default {
   mounted() {
   },
   methods: {
+    logout: function (e) {
+      this.$emit('logout');
+    },
   },
 };
 </script>

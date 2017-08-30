@@ -691,8 +691,8 @@ table, th, td {
 }
 
 .report {
-  width: 75%;
-  margin-top: 20px;
+  width: 65%;
+  margin-top: 10px;
 }
 
 .rbc-center-text {

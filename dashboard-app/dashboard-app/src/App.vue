@@ -14,7 +14,7 @@ License for the specific language governing permissions and limitations under th
 <template>
   <div id="app">
     <div id="userProfile">
-      <userprofile ref="userprofile"></userprofile>
+      <userprofile ref="userprofile" @logout="logout"></userprofile>
     </div>
     <div id="reportContainer">
       <report ref="report"> </report>
@@ -110,6 +110,10 @@ export default {
         child.performUpdate(this.awsconfig.credentials, config.lex.botName, region);
       }
     },
+    logout () {
+      console.log('logout');
+      window.location.href = 'index.html?dosignout';
+    }
   },
 };
 
@@ -133,19 +137,12 @@ export default {
   width: 100%;
 }
 
-#reportContainer {
-  position: absolute;
-  width: 80%;
-  display: inline-flex;
-  bottom: 30px;
-  left: 0px;
-  top: 0px;
-}
 
 #lex-web {
   width: 35%;
   height: 100%;
   position: absolute;
   right: 0px;
+  top: 0px;
 }
 </style>
