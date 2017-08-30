@@ -47,6 +47,7 @@ const poolId = localStorage.getItem('poolid');
 const region = localStorage.getItem('awsregionname');
 const idtoken = localStorage.getItem('idtokenjwt');
 const poolName = localStorage.getItem('poolname');
+const noauth = localStorage.getItem('noauth');
 
 const config = {
   cognito: { poolId },
@@ -54,13 +55,20 @@ const config = {
   ui: { toolbarLogo: '', toolbarTitle: 'Resolutions' },
 };
 
-
+let credentials;
 const logins = {};
 logins[poolName] = idtoken;
-const credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: poolId,
-  Logins: logins,
-}, { region });
+
+if (noauth === 'true') {
+  credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: poolId,
+  }, { region });
+} else {
+  credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: poolId,
+    Logins: logins,
+  }, { region });
+}
 
 const localConfig = new AWS.Config({ region, credentials });
 const store = new Vuex.Store(LexWebUiStore);

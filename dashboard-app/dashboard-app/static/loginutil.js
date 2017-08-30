@@ -9,8 +9,6 @@ localStorage.setItem('awsregionname', region);
 const token = localStorage.getItem('idtokenjwt');
 const rd1 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedin';
 const rd2 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedout';
-console.log('redirect1: ' + rd1);
-console.log('redirect2: ' + rd2);
 const authData = {
   ClientId: appUserPoolClientId, // Your client id here
   AppWebDomain: appDomainName,
@@ -44,20 +42,28 @@ if (curUrl.indexOf('home') >= 0) {
     auth.getSession();
   } else {
     console.log('goto home');
+    const session = auth.getSignInUserSession();
+    if (!session.isValid()) {
+      auth.getSession();
+    }
   }
+} else if (curUrl.indexOf('noauth') >= 0) {
+  localStorage.setItem('noauth', 'true');
 } else if (curUrl.indexOf('loggedin') >= 0) {
   const values = curUrl.split('?');
   const minurl = '/' + values[1];
   auth.parseCognitoWebResponse(minurl);
   const idToken = auth.getSignInUserSession().getIdToken();
+  localStorage.setItem('noauth', 'false');
   localStorage.setItem('idtokenjwt', idToken.getJwtToken());
   localStorage.setItem('poolname', appUserPoolName);
   window.location.href = 'index.html?home';
 } else if (curUrl.indexOf('loggedout') >= 0) {
   console.log('logout complete');
+  localStorage.removeItem('noauth');
   window.location.href = 'index.html?home';
 } else if (curUrl.indexOf('index.html?dosignout') >= 0) {
   logout();
 } else {
-  auth.getSession();
+  window.location.href = 'indexnoauth.html';
 }

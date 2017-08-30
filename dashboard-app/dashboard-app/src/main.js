@@ -35,6 +35,7 @@ const poolId = localStorage.getItem('poolid');
 const region = localStorage.getItem('awsregionname');
 const idtoken = localStorage.getItem('idtokenjwt');
 const poolName = localStorage.getItem('poolname');
+const noauth = localStorage.getItem('noauth');
 
 console.log('idtoken is: ' + idtoken);
 /**
@@ -43,18 +44,23 @@ console.log('idtoken is: ' + idtoken);
 function initCredentials() {
   const logins = {};
   logins[poolName] = idtoken;
-  const credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: poolId,
-    Logins: logins,
-  }, { region });
-  return credentials;
+  if (noauth === 'true') {
+    const credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: poolId,
+    }, { region });
+    return credentials;
+  } else {
+    const credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: poolId,
+      Logins: logins,
+    }, { region });
+    return credentials;
+  }
 }
 
 const credentials = initCredentials();
 
 credentials.getPromise().then(function () {
-  console.log('promise returned: ' + JSON.stringify(credentials, null, 2));
-  console.log('identityid: ' + credentials.identityId);
   localStorage.setItem('cognitoid', credentials.identityId);
   const awsConfig = new AWS.Config({ region, credentials });
   const app = new Vue({
