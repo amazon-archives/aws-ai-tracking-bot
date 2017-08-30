@@ -42,6 +42,7 @@ auth.userhandler = {
 
 const curUrl = window.location.href;
 if (curUrl.indexOf('home') >= 0) {
+  localStorage.setItem('username', auth.getUsername());
   if (token === null || token === undefined) {
     auth.getSession();
   } else {
@@ -59,7 +60,6 @@ if (curUrl.indexOf('home') >= 0) {
   const minurl = '/' + values[1];
   auth.parseCognitoWebResponse(minurl);
   const idToken = auth.getSignInUserSession().getIdToken();
-  localStorage.setItem('username', auth.getUsername());
   localStorage.setItem('noauth', 'false');
   localStorage.setItem('idtokenjwt', idToken.getJwtToken());
   localStorage.setItem('poolname', appUserPoolName);

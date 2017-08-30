@@ -33,19 +33,22 @@ export default {
   name: 'UserProfile',
   data() {
     return {
-      username: localStorage.getItem('username'),
+      username: '',
     };
   },
   mounted() {
-    let v = localStorage.getItem('username');
-    if (v === undefined) {
-      v = '';
-    }
-    this.username = v;
+    this.username = this.obtainUsername();
   },
   methods: {
     logout: function (e) {
       this.$emit('logout');
+    },
+    obtainUsername() {
+      let v = localStorage.getItem('username');
+      if (v === undefined) {
+        v = '';
+      }
+      return v;
     },
   },
 };
