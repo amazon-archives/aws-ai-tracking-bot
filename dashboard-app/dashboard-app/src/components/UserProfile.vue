@@ -37,6 +37,11 @@ export default {
     };
   },
   mounted() {
+    let v = localStorage.getItem('username');
+    if (v === undefined) {
+      v = '';
+    }
+    this.username = v;
   },
   methods: {
     logout: function (e) {

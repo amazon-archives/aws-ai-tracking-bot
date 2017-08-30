@@ -69,6 +69,7 @@ if (curUrl.indexOf('home') >= 0) {
   localStorage.removeItem('noauth');
   localStorage.removeItem('idtokenjwt');
   localStorage.removeItem('cognitoid');
+  localStorage.removeItem('username');
   if (noauth === 'true') {
     window.location.href = 'indexnoauth.html';
   } else {
