@@ -49,6 +49,7 @@ if (curUrl.indexOf('home') >= 0) {
   }
 } else if (curUrl.indexOf('noauth') >= 0) {
   localStorage.setItem('noauth', 'true');
+  localStorage.removeItem('idtokenjwt');
 } else if (curUrl.indexOf('loggedin') >= 0) {
   const values = curUrl.split('?');
   const minurl = '/' + values[1];
@@ -61,9 +62,13 @@ if (curUrl.indexOf('home') >= 0) {
 } else if (curUrl.indexOf('loggedout') >= 0) {
   console.log('logout complete');
   localStorage.removeItem('noauth');
-  window.location.href = 'index.html?home';
+  localStorage.removeItem('idtokenjwt');
+  localStorage.removeItem('cognitoid');
+  window.location.href = 'index.html';
 } else if (curUrl.indexOf('index.html?dosignout') >= 0) {
   logout();
+} else if (token) {
+  window.location.href = 'index.html?home';
 } else {
   window.location.href = 'indexnoauth.html';
 }

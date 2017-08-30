@@ -1,9 +1,9 @@
 {
-  "iframeOrigin": "TBD",
+  "iframeOrigin": "http://localhost:8080",
   "aws": {
-    "cognitoPoolId": "us-east-1:53ea48f1-3b0a-4aad-82dd-3ced2744a854",
+    "cognitoPoolId": "us-east-1:fe3d87be-c2ad-467f-a59e-f477bf0cacde",
     "region": "us-east-1",
-    "botName": "Resolutions"
+    "botName": "resolutionsdev"
   },
   "iframeConfig": {
     "lex": {

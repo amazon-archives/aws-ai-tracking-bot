@@ -7,7 +7,20 @@ The LexAppBuilder generates a Lex Bot and associated resources: DynamoDB tables,
 
 The aws-lex-web-ui provides a browser based interface (voice and text) for this Bot and lives in an s3 bucket.
 
-The dashboard-app provides a sample dashboard which makes use of the IFrame capability in the aws-lex-web-ui.
+The dashboard-app provides a sample dashboard which makes use of the npm module capability of the aws-lex-web-ui.
+
+The dashboard-app provides for both un-authenticated access and authenticated access. Authenticated access allows the user
+to login from multiple systems or mobile devices and remain connected with data provided from any device.
+Un-authenticated access provides access to data specific to the system you have logged in from. 
+
+When using authentication, a user will need to sign up via the link provided on the authentication form.
+
+The authentication form can be customized using the AWS Console. 
+* Goto the Cognito service in the console
+* Select the user pool created  by the Cloud Formation template. It will be the name of the stack appended with 'CognitoUserPool'
+* Click on UI customization from the menu
+* Drag in a logo to use or Update CSS customizations
+
 
 The contents of TrackingBotModel.json at src/assets/TrackingBotModel.json defines the model used by this
 dashboard app and the model injected into Lex using the LexAppBuilder.
