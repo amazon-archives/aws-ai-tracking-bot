@@ -13,11 +13,19 @@ License for the specific language governing permissions and limitations under th
 
 <template>
   <div>
-    <div class="username"> {{ username }} <button>logout</button></div>
+    <div class="username">
+      {{ username }}
+      <v-button>logout</v-button>
+    </div>
   </div>
 </template>
 
 <script>
+
+import Vue from 'vue';
+import VueButton from 'vue-button';
+
+Vue.component('v-button', VueButton);
 
 /* eslint-disable no-new, no-alert */
 export default {

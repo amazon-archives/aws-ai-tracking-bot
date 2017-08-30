@@ -692,6 +692,7 @@ table, th, td {
 
 .report {
   width: 75%;
+  margin-top: 20px;
 }
 
 .rbc-center-text {

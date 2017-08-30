@@ -129,6 +129,10 @@ export default {
   margin-top: 15px;
 }
 
+#userProfile {
+  width: 100%;
+}
+
 #reportContainer {
   position: absolute;
   width: 80%;
