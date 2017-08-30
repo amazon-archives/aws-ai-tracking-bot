@@ -16,7 +16,7 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 
-/* eslint-disable no-new, no-console, no-unused-vars, prefer-template, prefer-arrow-callback, func-names */
+/* eslint-disable no-new, no-console, no-unused-vars, prefer-template, prefer-arrow-callback, func-names, no-else-return */
 
 import Vue from 'vue';
 import { VTooltip } from 'v-tooltip';

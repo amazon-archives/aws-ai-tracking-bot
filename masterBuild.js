@@ -105,30 +105,22 @@ copyFile(model,"dashboard-app/dashboard-app/src/assets/TrackingBotModel.json")
     if (data) {
       console.info("Lex Model copy complete to dashboard-app");
     }
-    makeLexWebUi(cp).then(function (data) {
+    makeDashboardUi(cp).then(function (data) {
       if (data) {
-        console.info("finished making lex web ui");
+        console.info("finished making dashboard ui");
       }
-      makeDashboardUi(cp).then(function (data) {
+      makeLexApp(cp).then(function (data) {
         if (data) {
-          console.info("finished making dashboard ui");
+          console.info("finished making lex bot");
         }
-        makeLexApp(cp).then(function (data) {
-          if (data) {
-            console.info("finished making lex bot");
-          }
-        }, function(error) {
-          console.error("failed to create lex app and bot: " + JSON.stringify(error,null,2));
-          process.exitCode = 1;
-        });
-      }, function (error) {
-        console.error("failed to create dashboard web ui: " + JSON.stringify(error,null,2));
+      }, function(error) {
+        console.error("failed to create lex app and bot: " + JSON.stringify(error,null,2));
         process.exitCode = 1;
-      })
+      });
     }, function (error) {
-      console.error("failed to create lex web ui: " + JSON.stringify(error,null,2));
+      console.error("failed to create dashboard web ui: " + JSON.stringify(error,null,2));
       process.exitCode = 1;
-    });
+    })
   }, function(error) {
     console.info("Lex Model copy to dashboard-app failed: " + JSON.stringify(error,null,2));
     process.exitCode = 1;

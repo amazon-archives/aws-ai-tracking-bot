@@ -55,6 +55,7 @@ if (curUrl.indexOf('home') >= 0) {
   const minurl = '/' + values[1];
   auth.parseCognitoWebResponse(minurl);
   const idToken = auth.getSignInUserSession().getIdToken();
+  localStorage.setItem('username', auth.getUsername());
   localStorage.setItem('noauth', 'false');
   localStorage.setItem('idtokenjwt', idToken.getJwtToken());
   localStorage.setItem('poolname', appUserPoolName);

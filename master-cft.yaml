@@ -529,14 +529,6 @@ Resources:
                             commands:
                                 - echo "INFO pre_build cmds"
                                 - aws configure set region "$AWS_DEFAULT_REGION"
-                                # CodePipeline doesn't provide a functioning repo to CodeBuild
-                                # but we need a functioning repo to support git submodule update.
-                                # To resolve this we will clone the source repo.
-                                - rm -fr `ls -Ab` && git clone -b ${GitHubBranch} "https://${GitHubRepoOwner}:${GitHubToken}@github.com/${GitHubRepoOwner}/${GitHubRepo}.git" .
-                                - sed -i 's%https://github.com%https://${GitHubRepoOwner}:${GitHubToken}@github.com%g' .gitmodules
-                                - git submodule init
-                                - git submodule update
-                                - cd aws-lex-web-ui && make install-deps
                                 - cd dashboard-app && make install-deps
                                 - cd LexAppBuilder && npm install
                                 - npm install
@@ -1025,7 +1017,7 @@ Resources:
                             UserPoolId='${CognitoUserPool}',
                             ClientId='${CognitoUserPoolClient}',
                             ClientName=stackName,
-                            RefreshTokenValidity=1,
+                            RefreshTokenValidity=365,
                             CallbackURLs=[
                                 'https://${WebAppBucketDashboard.DomainName}/index.html?loggedin',
                             ],

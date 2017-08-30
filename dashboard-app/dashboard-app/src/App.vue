@@ -13,6 +13,9 @@ License for the specific language governing permissions and limitations under th
 
 <template>
   <div id="app">
+    <div id="userProfile">
+      <userprofile ref="userprofile"></userprofile>
+    </div>
     <div id="reportContainer">
       <report ref="report"> </report>
     </div>
@@ -36,6 +39,7 @@ import LexRuntime from 'aws-sdk/clients/lexruntime';
 import Polly from 'aws-sdk/clients/polly';
 import { Plugin as LexWebUi, Store as LexWebUiStore } from 'aws-lex-web-ui';
 import Report from './components/Report';
+import UserProfile from './components/UserProfile';
 
 Vue.use(Vuetify);
 Vue.use(Vuex);
@@ -76,6 +80,7 @@ const lexRuntimeClient = new LexRuntime(localConfig);
 const pollyClient = new Polly(localConfig);
 
 Vue.component('report', Report);
+Vue.component('userprofile', UserProfile);
 
 Vue.use(LexWebUi, { config, awsConfig: localConfig, lexRuntimeClient, pollyClient, store });
 
