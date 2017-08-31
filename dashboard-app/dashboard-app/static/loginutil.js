@@ -28,6 +28,8 @@ function logout() {
     window.location.href = 'indexnoauth.html';
   } else {
     auth.signOut();
+    auth.clearCachedTokensScopes();
+    localStorage.removeItem('aws.cognito.identity-id.' + poolid);
   }
 }
 

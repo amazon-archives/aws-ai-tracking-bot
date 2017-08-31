@@ -140,9 +140,10 @@ export default {
 
 #lex-web {
   width: 35%;
-  height: 100%;
+  height: 85%;
   position: absolute;
   right: 0px;
   top: 0px;
+  margin-right: 10px;
 }
 </style>
