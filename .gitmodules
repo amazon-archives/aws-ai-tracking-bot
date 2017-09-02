@@ -1,3 +1,0 @@
-[submodule "aws-lex-web-ui"]
-	path = aws-lex-web-ui
-	url = https://github.com/awslabs/aws-lex-web-ui
