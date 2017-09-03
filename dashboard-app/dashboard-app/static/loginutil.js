@@ -25,7 +25,7 @@ const auth = new CognitoAuth(authData);
 function logout() {
   localStorage.removeItem('idtokenjwt');
   if (noauth === 'true') {
-    window.location.href = 'indexentry.html';
+    window.location.href = '/static/indexentry.html';
   } else {
     auth.signOut();
     auth.clearCachedTokensScopes();
@@ -73,7 +73,7 @@ if (curUrl.indexOf('home') >= 0) {
   localStorage.removeItem('cognitoid');
   localStorage.removeItem('username');
   if (noauth === 'true') {
-    window.location.href = 'indexentry.html';
+    window.location.href = '/static/indexentry.html';
   } else {
     window.location.href = 'index.html';
   }
@@ -82,5 +82,5 @@ if (curUrl.indexOf('home') >= 0) {
 } else if (token) {
   window.location.href = 'index.html?home';
 } else {
-  window.location.href = 'indexentry.html';
+  window.location.href = '/static/indexentry.html';
 }
