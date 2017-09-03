@@ -25,7 +25,7 @@ const auth = new CognitoAuth(authData);
 function logout() {
   localStorage.removeItem('idtokenjwt');
   if (noauth === 'true') {
-    window.location.href = 'indexnoauth.html';
+    window.location.href = 'indexentry.html';
   } else {
     auth.signOut();
     auth.clearCachedTokensScopes();
