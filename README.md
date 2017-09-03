@@ -13,8 +13,8 @@ years party for the upcoming year. For example these might be to volunteer more 
 to give more funds to charity, to donate more articles to charity, to participate in 
 more community events, etc. 
 
-There are four main components in this application: LexAppBuilder, LexWebUi 
-(in the aws-lex-web-ui folder), dashboard-app, and an Android App contained in the
+There are four main components in this application: LexAppBuilder, dashboard-app, the LexWebUi 
+used as an npm module in the dashboard app, and an Android App contained in the
 TrackingBot-aws-my-sample-app-android folder. 
 
 ## LexAppBuilder
@@ -35,14 +35,15 @@ than editing the model, no additional work is needed at the Bot level.
 ## LexWebUi
 
 This component is responsible for providing a web based interface to interact with Lex. It is
-incorporated as a submodule and presented as an iframe in the dashboard-app. 
-The LexWebUi can be used as a component in other chat based applications.
+incorporated as an npm component and presented in a div element in the dashboard-app. 
+The LexWebUi can be used as a component in other chat based applications. See the aws-lex-web-ui
+component.
 
 ## dashboard-app
 
 Provides a sample dashboard generating simple radial pie charts to show
 progress towards goals specified in the tracking bot model. The dashboard-app presents results
-based on categories defined in the model. It also presents the LexWebUi as an IFrame to allow
+based on categories defined in the model. It also presents the LexWebUi in a div element to allow
 easy user interaction. 
 
 ## TrackingBot-aws-my-sample-app-android
@@ -64,7 +65,6 @@ two actions is created.
 
 The first action calls masterBuild.js. This nodejs based script performs the following:
 
-* builds the aws-lex-web-ui and stores this in an S3 bucket
 * builds the dashboard-app and stores this in a separate S3 bucket. The dashboard-app 
 integrates the aws-lex-web-ui as an IFrame.
 * runs the LexAppBuilder which creates a stack based on the supplied model. This stack 

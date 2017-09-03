@@ -5,8 +5,6 @@ shared with both the LexAppBuilder and the aws-lex-web-ui.
 
 The LexAppBuilder generates a Lex Bot and associated resources: DynamoDB tables, roles, lambda functions, etc.
 
-The aws-lex-web-ui provides a browser based interface (voice and text) for this Bot and lives in an s3 bucket.
-
 The dashboard-app provides a sample dashboard which makes use of the npm module capability of the aws-lex-web-ui.
 
 The dashboard-app provides for both un-authenticated access and authenticated access. Authenticated access allows the user
@@ -22,13 +20,15 @@ The authentication form can be customized using the AWS Console.
 * Drag in a logo to use or Update CSS customizations
 
 
-The contents of TrackingBotModel.json at src/assets/TrackingBotModel.json defines the model used by this
+The contents of TrackingBotModel.json at src/assets/TrackingBotModel.json defines the model used by the
 dashboard app and the model injected into Lex using the LexAppBuilder.
 
 This application is based on [Vue.js](https://vuejs.org/). 
 
-* A component, Report.vue, was created which handles display of the dashboard. 
-* The LexWebUI is loaded into an IFrame in bot-loader-vue.js. 
+* The component, Report.vue, handles display of the dashboard. 
+* The component, StackedBar.vue, handles display of a D3 based stacked bar chart
+* The component, UserProfile.vue, handles initial display of logged in user data and settings
+* The LexWebUI is now loaded as npm module within the dashboard
 * App.vue is the primary entry point to the dashboard. 
 * main.js loads the application. 
 

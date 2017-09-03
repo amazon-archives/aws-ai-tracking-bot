@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title>aws-ai-tracking-bot sample dashboard-app</title>
+    <style>
+      p.main {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin-top: 15px;
+        margin-left: 50px;
+        margin-right: 50px;
+      }
+      li.main {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin-top: 15px;
+        margin-left: 50px;
+        margin-right: 50px;
+      }
+    </style>
+  </head>
+  <body>
+  </head>
+  <body>
+   <div>
+     <div align="center">
+       <img src='500px-AWS_Logo_Web-Color.png' height='75px'/>
+       <h1> Welcome to the aws-ai-tracking-bot Sample Dashboard</h1>
+       <button onclick="window.location.href='/index.html?noauth';">Proceed un-authenticated</button>
+       <button onclick="window.location.href='/index.html?home';">Use authentication</button>
+     </div>
+     <p class='main'>
+     There are two ways to access the dashboard.
+     </p>
+
+     <ul>
+     <li class='main'>
+       Using an un-authenticated login OR using an authenticated login. Unauthenticated access
+       allows the user to access the tracking-bot anonymously. Metrics are stored such that only
+       data is stored unique to this device / browser. Other browsers and devices will not have
+       access to this data. Access is relative to a user created for this browser / device combination.
+     </li>
+
+     <li class='main'>
+       Using an Authenticated login requires the user to sign on to an account the user has created. If
+       a user does not have an account, the user will need to create one specifying a username, emaill
+       address, and password. The benefit of this approach is that the user can access the dashboard
+       from any deivce or browser. The user will login using their username / password combination and
+       will see metrics entered from any device.
+     </li>
+     </ul>
+
+   </div>
+
+  </body>
+</html>

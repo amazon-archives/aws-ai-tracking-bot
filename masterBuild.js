@@ -18,7 +18,6 @@ const argv = require('minimist')(process.argv.slice(2));
 const bootstrap_bucket = (argv["bootstrap-bucket"] !== undefined) ? argv["bootstrap-bucket"] : undefined;
 const bootstrap_bucket_artifacts = "artifacts";
 const bootstrap_bucket_path = bootstrap_bucket + "/" + bootstrap_bucket_artifacts;
-const webapp_bucket = (argv["webapp-bucket"] != undefined) ? argv["webapp-bucket"] : process.env.WEBAPP_BUCKET;
 const webapp_bucket_dashboard = (argv["webapp-bucket-dashboard"] != undefined) ? argv["webapp-bucket-dashboard"] : process.env.WEBAPP_BUCKET_DASHBOARD;
 const botname = (argv.botname != undefined) ? argv.botname : process.env.BOTNAME;
 const region = (argv.region != undefined) ? argv.region : process.env.AWS_DEFAULT_REGION;
@@ -29,19 +28,11 @@ function usage() {
   console.error("Invalid options or environment");
   console.error("node masterBuild.js " +
     "--bootstrap-bucket bucket " +
-    "--webapp-bucket bucket " +
     "--webapp-bucket-dashboard bucket" +
     "--botname botname " +
     "--model modelfilepath "  +
     "--cognito-poolid poolid " +
     "--region us-east-1 ");
-}
-
-if (webapp_bucket === undefined) {
-  usage();
-  return;
-} else {
-  process.env.WEBAPP_BUCKET =  webapp_bucket;
 }
 
 if (webapp_bucket_dashboard === undefined) {
@@ -125,31 +116,6 @@ copyFile(model,"dashboard-app/dashboard-app/src/assets/TrackingBotModel.json")
     console.info("Lex Model copy to dashboard-app failed: " + JSON.stringify(error,null,2));
     process.exitCode = 1;
   });
-
-
-function makeLexWebUi(cp) {
-  return new Promise(function (resolve, reject) {
-    process.chdir('aws-lex-web-ui');
-    let out = cp.spawnSync('make', ['build']);
-    console.log("stdout");
-    console.log(out.stdout.toString("utf8"));
-    console.log("stderr");
-    console.log(out.stderr.toString("utf8"));
-    if (out.status !== 0) {
-      reject(out.error);
-    }
-    out = cp.spawnSync('make', ['s3deploy']);
-    console.log("stdout");
-    console.log(out.stdout.toString("utf8"));
-    console.log("stderr");
-    console.log(out.stderr.toString("utf8"));
-    if (out.status !== 0) {
-      reject(out.error);
-    }
-    process.chdir('..');
-    resolve();
-  });
-}
 
 function makeDashboardUi(cp) {
   return new Promise(function (resolve, reject) {

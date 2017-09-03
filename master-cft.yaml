@@ -134,17 +134,6 @@ Resources:
             VersioningConfiguration:
                 Status: Enabled
 
-    # Bucket where the lex web ui is deployed
-    WebAppBucket:
-        Type: AWS::S3::Bucket
-        DependsOn: CleanStackName
-        DeletionPolicy: Retain
-        Properties:
-            WebsiteConfiguration:
-                IndexDocument: index.html
-            VersioningConfiguration:
-                Status: Enabled
-
     # bucket where the dashboard app ui is deployed
     WebAppBucketDashboard:
         Type: AWS::S3::Bucket
@@ -473,8 +462,6 @@ Resources:
                             Resource:
                                 - !Sub "arn:aws:s3:::${ArtifactStore}"
                                 - !Sub "arn:aws:s3:::${ArtifactStore}/*"
-                                - !Sub "arn:aws:s3:::${WebAppBucket}"
-                                - !Sub "arn:aws:s3:::${WebAppBucket}/*"
                                 - !Sub "arn:aws:s3:::${WebAppBucketDashboard}"
                                 - !Sub "arn:aws:s3:::${WebAppBucketDashboard}/*"
 
@@ -492,8 +479,6 @@ Resources:
                 Image: aws/codebuild/eb-nodejs-4.4.6-amazonlinux-64:2.1.3
                 ComputeType: BUILD_GENERAL1_LARGE
                 EnvironmentVariables:
-                    - Name: WEBAPP_BUCKET
-                      Value: !Ref WebAppBucket
                     - Name: WEBAPP_BUCKET_DASHBOARD
                       Value: !Ref WebAppBucketDashboard
                     - Name: BOOTSTRAP_BUCKET_PATH
@@ -502,8 +487,6 @@ Resources:
                       Value: !Sub "${AWS::Region}"
                     - Name: PARENT_ORIGIN
                       Value: !Sub "https://${WebAppBucketDashboard.DomainName}"
-                    - Name: IFRAME_ORIGIN
-                      Value: !Sub "https://${WebAppBucket.DomainName}"
                     - Name: USER_POOL_CLIENT_ID
                       Value: !Sub "${CognitoUserPoolClient}"
                     - Name: USER_POOL_NAME
@@ -537,7 +520,7 @@ Resources:
                                 - echo "INFO build cmds"
                                 - pwd
                                 - env
-                                - node masterBuild.js --bootstrap-bucket ${ArtifactStore} --webapp-bucket ${WebAppBucket} --webapp-bucket-dashboard ${WebAppBucketDashboard} --botname ${CleanStackName.CleanStackNameValue} --model LexAppBuilder/model/TrackingBotModel.json --cognito-poolid ${CognitoIdentityPool} --region ${AWS::Region}
+                                - node masterBuild.js --bootstrap-bucket ${ArtifactStore} --webapp-bucket-dashboard ${WebAppBucketDashboard} --botname ${CleanStackName.CleanStackNameValue} --model LexAppBuilder/model/TrackingBotModel.json --cognito-poolid ${CognitoIdentityPool} --region ${AWS::Region}
                         post_build:
                             commands:
                                 - echo "INFO post_build cmds"
@@ -714,7 +697,6 @@ Resources:
                             try:
                                 deleteStack("${CleanStackName.CleanStackNameValue}LexAppStack")
                                 deleteS3Bucket("${ArtifactStore}")
-                                deleteS3Bucket("${WebAppBucket}")
                                 deleteS3Bucket("${WebAppBucketDashboard}")
                             except Exception as e:
                                 print("Exception thrown: %s" % str(e))
@@ -783,8 +765,6 @@ Resources:
                             Resource:
                                 - !Sub "arn:aws:s3:::${ArtifactStore}"
                                 - !Sub "arn:aws:s3:::${ArtifactStore}/*"
-                                - !Sub "arn:aws:s3:::${WebAppBucket}"
-                                - !Sub "arn:aws:s3:::${WebAppBucket}/*"
                                 - !Sub "arn:aws:s3:::${WebAppBucketDashboard}"
                                 - !Sub "arn:aws:s3:::${WebAppBucketDashboard}/*"
                 - PolicyName: CognitoDeleteAccess
