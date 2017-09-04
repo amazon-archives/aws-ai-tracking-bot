@@ -372,7 +372,7 @@ function buildBot(botName, model, lambdaFunctionArn) {
     }
 
     let autoPlurals = false;
-    if (model.data.bot.categories[i].object.autoPlurals.toLowerCase() === 'yes') {
+    if (model.data.bot.categories[i].object.autoPlurals && model.data.bot.categories[i].object.autoPlurals.toLowerCase() === 'yes') {
       autoPlurals = true;
     }
     const slottypeObject = generateSlotType(slottypeObjectName.toLowerCase(), model.data.bot.categories[i].object.values, autoPlurals);
