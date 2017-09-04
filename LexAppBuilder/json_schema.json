@@ -89,6 +89,10 @@
                     "id": "/properties/bot/properties/categories/items/properties/object/properties/type",
                     "type": "string"
                   },
+                  "autoPlurals": {
+                    "id": "/properties/bot/properties/categories/items/properties/object/properties/autoPlurals",
+                    "type": "string"
+                  },
                   "values": {
                     "id": "/properties/bot/properties/categories/items/properties/object/properties/values",
                     "items": {
