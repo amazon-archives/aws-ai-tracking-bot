@@ -40,6 +40,7 @@ import Polly from 'aws-sdk/clients/polly';
 import { Plugin as LexWebUi, Store as LexWebUiStore } from 'aws-lex-web-ui';
 import Report from './components/Report';
 import UserProfile from './components/UserProfile';
+import model from './assets/TrackingBotModel.json';
 
 Vue.use(Vuetify);
 Vue.use(Vuex);
@@ -55,8 +56,8 @@ const noauth = localStorage.getItem('noauth');
 
 const config = {
   cognito: { poolId },
-  lex: { botName: 'resolutionsdev', initialText: 'How can I help you?' },
-  ui: { toolbarLogo: '', toolbarTitle: 'Resolutions' },
+  lex: { botName: appBotName, initialText: model.bot.ui.initialText, initialSpeechInstruction: model.bot.ui.initialSpeechInstruction },
+  ui: { toolbarLogo: '', toolbarTitle: model.bot.ui.titleBar },
 };
 
 let credentials;
