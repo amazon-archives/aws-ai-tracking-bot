@@ -901,17 +901,19 @@ Resources:
                             print("Exception thrown in cfnresponse: %s" % str(e))
                             pass
                     def deleteDomain(stackName):
-                        print("Deleting domain %s" % stackName)
+                        normalized = stackName.lower()
+                        print("Deleting domain %s" % normalized)
                         client = boto3.client('cognito-idp')
                         response = client.delete_user_pool_domain(
-                            Domain=stackName,
+                            Domain=normalized,
                             UserPoolId='${CognitoUserPool}'
                         )
                     def createDomain(stackName):
-                        print("Creating domain %s" % stackName)
+                        normalized = stackName.lower()
+                        print("Creating domain %s" % normalized)
                         client = boto3.client('cognito-idp')
                         response = client.create_user_pool_domain(
-                            Domain=stackName,
+                            Domain=normalized,
                             UserPoolId='${CognitoUserPool}'
                         )
 
@@ -991,12 +993,13 @@ Resources:
                             print("Exception thrown in cfnresponse: %s" % str(e))
                             pass
                     def updatePool(stackName):
-                        print("Updating Pool domain %s" % stackName)
+                        normalized = stackName.lower()
+                        print("Updating Pool domain %s" % normalized)
                         client = boto3.client('cognito-idp')
                         response = client.update_user_pool_client(
                             UserPoolId='${CognitoUserPool}',
                             ClientId='${CognitoUserPoolClient}',
-                            ClientName=stackName,
+                            ClientName=normalized,
                             RefreshTokenValidity=365,
                             CallbackURLs=[
                                 'https://${WebAppBucketDashboard.DomainName}/index.html?loggedin',
