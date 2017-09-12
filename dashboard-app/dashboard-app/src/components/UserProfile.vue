@@ -51,15 +51,15 @@ export default {
         v = '';
       }
 
-      const idToken = localStorage.getItem('idtokenjwt');
+      const accessToken = localStorage.getItem('accesstokenjwt');
       const CognitoIdentityServiceProvider = AWS.CognitoIdentityServiceProvider;
       const cisp = new CognitoIdentityServiceProvider({ region: 'us-east-1' });
       const params = {
-        AccessToken: idToken,
+        AccessToken: accessToken,
       };
       cisp.getUser(params, function (err, data) {
-        if (err) console.log('getUser err:' + err, err.stack); // an error occurred
-        else console.log('getUser: ' + JSON.stringify(data, null, 2));           // successful response
+        if (err) console.log('UserProfile getUser err:' + err, err.stack); // an error occurred
+        else console.log('UserProfile getUser: ' + JSON.stringify(data, null, 2));           // successful response
       });
 
       return v;

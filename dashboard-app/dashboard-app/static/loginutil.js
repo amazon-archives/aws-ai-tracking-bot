@@ -67,8 +67,10 @@ if (curUrl.indexOf('home') >= 0) {
   try {
     auth.parseCognitoWebResponse(minurl);
     const idToken = auth.getSignInUserSession().getIdToken();
+    const accessToken = auth.getSignInUserSession().getAccessToken();
     localStorage.setItem('noauth', 'false');
     localStorage.setItem('idtokenjwt', idToken.getJwtToken());
+    localStorage.setItem('accesstokenjwt', accessToken.getJwtToken());
     localStorage.setItem('poolname', appUserPoolName);
     window.location.href = 'index.html?home';
   } catch (reason) {
