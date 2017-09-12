@@ -8,8 +8,12 @@ localStorage.setItem('poolid', poolid);
 localStorage.setItem('awsregionname', region);
 const token = localStorage.getItem('idtokenjwt');
 const noauth = localStorage.getItem('noauth');
-const rd1 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedin';
-const rd2 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedout';
+const rd1 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedin=yes';
+const rd2 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedout=yes';
+
+console.log('rd1 is: ' + rd1);
+console.log('rd2 is: ' + rd2);
+
 const authData = {
   ClientId: appUserPoolClientId, // Your client id here
   AppWebDomain: appDomainName,
@@ -18,7 +22,7 @@ const authData = {
   RedirectUriSignOut: rd2,
 };
 
-/* eslint-disable prefer-template, object-shorthand */
+/* eslint-disable prefer-template, object-shorthand, no-console, prefer-arrow-callback */
 
 const auth = new CognitoAuth(authData);
 
@@ -60,12 +64,18 @@ if (curUrl.indexOf('home') >= 0) {
 } else if (curUrl.indexOf('loggedin') >= 0) {
   const values = curUrl.split('?');
   const minurl = '/' + values[1];
-  auth.parseCognitoWebResponse(minurl);
-  const idToken = auth.getSignInUserSession().getIdToken();
-  localStorage.setItem('noauth', 'false');
-  localStorage.setItem('idtokenjwt', idToken.getJwtToken());
-  localStorage.setItem('poolname', appUserPoolName);
-  window.location.href = 'index.html?home';
+  try {
+    auth.parseCognitoWebResponse(minurl);
+    const idToken = auth.getSignInUserSession().getIdToken();
+    localStorage.setItem('noauth', 'false');
+    localStorage.setItem('idtokenjwt', idToken.getJwtToken());
+    localStorage.setItem('poolname', appUserPoolName);
+    window.location.href = 'index.html?home';
+  } catch (reason) {
+    console.log('failed to parse response: ' + reason);
+    console.log('url was: ' + minurl);
+    window.location.href = 'index.html';
+  };
 } else if (curUrl.indexOf('loggedout') >= 0) {
   console.log('logout complete');
   localStorage.removeItem('noauth');
