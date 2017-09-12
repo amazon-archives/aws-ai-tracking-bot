@@ -22,12 +22,14 @@ License for the specific language governing permissions and limitations under th
 
 <script>
 
+import AWS from 'aws-sdk';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 
 Vue.use(Vuetify);
 
-/* eslint-disable no-new, no-alert, no-console, func-names, no-unused-vars, object-shorthand */
+/* eslint-disable no-new, no-alert, no-console, func-names, no-unused-vars, object-shorthand,
+   prefer-arrow-callback, prefer-template */
 
 export default {
   name: 'UserProfile',
@@ -48,6 +50,18 @@ export default {
       if (v === undefined) {
         v = '';
       }
+
+      const idToken = localStorage.getItem('idtokenjwt');
+      const CognitoIdentityServiceProvider = AWS.CognitoIdentityServiceProvider;
+      const cisp = new CognitoIdentityServiceProvider({ region: 'us-east-1' });
+      const params = {
+        AccessToken: idToken,
+      };
+      cisp.getUser(params, function (err, data) {
+        if (err) console.log('getUser err:' + err, err.stack); // an error occurred
+        else console.log('getUser: ' + JSON.stringify(data, null, 2));           // successful response
+      });
+
       return v;
     },
   },
