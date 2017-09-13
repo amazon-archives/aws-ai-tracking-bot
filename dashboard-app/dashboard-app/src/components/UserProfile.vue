@@ -22,9 +22,10 @@ License for the specific language governing permissions and limitations under th
 
 <script>
 
-import AWS from 'aws-sdk';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+
+const jwt = require('jsonwebtoken');
 
 Vue.use(Vuetify);
 
@@ -51,17 +52,17 @@ export default {
         v = '';
       }
 
-      const accessToken = localStorage.getItem('accesstokenjwt');
-      const CognitoIdentityServiceProvider = AWS.CognitoIdentityServiceProvider;
-      const cisp = new CognitoIdentityServiceProvider({ region: 'us-east-1' });
-      const params = {
-        AccessToken: accessToken,
-      };
-      cisp.getUser(params, function (err, data) {
-        if (err) console.log('UserProfile getUser err:' + err, err.stack); // an error occurred
-        else console.log('UserProfile getUser: ' + JSON.stringify(data, null, 2));           // successful response
-      });
-
+      const decoded = jwt.decode(localStorage.getItem('idtokenjwt'), { complete: true} );
+      if (decoded) {
+        if (decoded.payload) {
+          if (decoded.payload.email) {
+            v = decoded.payload.email;
+          }
+          if (decoded.payload.preferred_username) {
+            v = decoded.payload.preferred_username;
+          }
+        }
+      }
       return v;
     },
   },
