@@ -1015,10 +1015,10 @@ Resources:
                                 'https://${WebAppBucketDashboard.DomainName}/index.html?loggedout=yes',
                             ],
                             SupportedIdentityProviders=[
-                                    'COGNITO'
+                                    'COGNITO',
                             ],
                             AllowedOAuthFlows=[
-                                'implicit'
+                                'implicit',
                             ],
                             AllowedOAuthScopes=[
                                 'phone', 'email', 'openid', 'profile'
