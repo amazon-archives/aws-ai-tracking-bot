@@ -168,15 +168,22 @@ function copyFile(source, target) {
       reject("Source does not exist");
     }
     const rd = fs.createReadStream(source);
-    rd.on('error', rejectCleanup);
-    const wr = fs.createWriteStream(target);
-    wr.on('error', rejectCleanup);
-    function rejectCleanup(err) {
+    rd.on('error', (err)=>{
       rd.destroy();
       wr.end();
       reject(err);
-    }
-    wr.on('finish', function() {wr.end(); wr.close(); resolve("success")});
+    });
+    const wr = fs.createWriteStream(target);
+    wr.on('error', (err)=>{
+      rd.destroy();
+      wr.end();
+      reject(err);
+    });
+    wr.on('finish', ()=>{
+      wr.end(); 
+      wr.close(); 
+      resolve("success");
+    });
     rd.pipe(wr);
   });
 }
@@ -191,14 +198,14 @@ function readModel(modelFile) {
 }
 
 function validateModel(model) {
-  var data = {};
+  let data = {};
   data = readModel(model);
-  var schema = readModel("LexAppBuilder/json_schema.json");
+  const schema = readModel("LexAppBuilder/json_schema.json");
 
   return new Promise(function (resolve, reject) {
     const Validator = require('jsonschema').Validator;
     const v = new Validator();
-    var result = v.validate(data, schema);
+    const result = v.validate(data, schema);
     if (result.valid === false) {
       console.error("Model failed to validate: " + JSON.stringify(result.errors,null,2));
       reject (result);
