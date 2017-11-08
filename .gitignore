@@ -46,3 +46,13 @@ site
 dist
 .gradle
 local.properties
+
+package-lock.json
+/TrackingBot-aws-my-sample-app-android/MySampleApp/AWSMobileHelper/build/
+/TrackingBot-aws-my-sample-app-android/MySampleApp/app/build/
+/TrackingBot-aws-my-sample-app-android/MySampleApp/build/
+/dashboard-app/dashboard-app/src/assets/TrackingBotModel.json
+/dashboard-app/dashboard-app/build/cert.pem
+/dashboard-app/dashboard-app/build/key.pem
+/dashboard-app/dashboard-app/static/appconfig.js
+/TrackingBot-aws-my-sample-app-android/MySampleApp/app/src/main/res/raw/awsconfiguration.json
