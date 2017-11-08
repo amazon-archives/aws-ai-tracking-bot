@@ -180,8 +180,7 @@ function copyFile(source, target) {
       reject(err);
     });
     wr.on('finish', ()=>{
-      wr.end(); 
-      wr.close(); 
+      wr.end();
       resolve("success");
     });
     rd.pipe(wr);
