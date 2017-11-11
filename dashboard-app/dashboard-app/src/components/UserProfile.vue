@@ -52,7 +52,7 @@ export default {
         v = '';
       }
 
-      const decoded = jwt.decode(localStorage.getItem('idtokenjwt'), { complete: true} );
+      const decoded = jwt.decode(localStorage.getItem('idtokenjwt'), { complete: true });
       if (decoded) {
         if (decoded.payload) {
           if (decoded.payload.email) {
