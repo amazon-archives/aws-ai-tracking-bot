@@ -47,11 +47,12 @@ import { VTooltip } from 'v-tooltip';
 import * as d3 from 'd3';
 import model from '../assets/TrackingBotModel.json';
 import StackedBar from './StackedBar';
+import Logger from '../logger';
 
 /* Stores RadialProgressChart instances to use on updates */
 const charts = {};
 
-/* eslint-disable no-new, no-alert, no-console */
+/* eslint-disable no-new, no-alert, max-len, no-loop-func */
 
 VTooltip.options.defaultClass = 'my-tooltip';
 Vue.component('detail-chart', StackedBar);
@@ -194,7 +195,7 @@ export default {
       this.showGraph = true;
       this.showTable = false;
       return this.getReportedDetailData(this.awsCredentials, this.botName, this.region,
-        this.fromDate, this.toDate)
+        this.fromDate, this.toDate, category)
         .then(data => this.parseDetailData(this.fromDate, this.toDate, data))
         .then((contentData) => {
           this.contentData = contentData;
@@ -211,7 +212,7 @@ export default {
       this.showInstructions = false;
       this.showGraph = false;
       return this.getReportedDetailData(this.awsCredentials, this.botName, this.region,
-        moment(this.toDate).subtract(1825, 'days'), this.toDate)
+        moment(this.toDate).subtract(1825, 'days'), this.toDate, category)
         .then((contentData) => {
           this.items = contentData.Items;
           this.showTable = true;
@@ -232,6 +233,23 @@ export default {
       }
       res += '</table>';
       return res;
+    },
+    defaultItem(m, dateMoment) {
+      const item = {
+        userId: localStorage.getItem('cognitoid'),
+        reported_time: dateMoment.format('YYYY-MM-DD'),
+      };
+      let idx = 0;
+      for (idx = 0; idx < m.bot.categories.length; ++idx) {
+        const name = m.bot.categories[idx].name;
+        item[name] = 0;
+        const targets = {};
+        targets.dailyTarget = m.bot.categories[idx].dailyTarget;
+        targets.weeklyTarget = m.bot.categories[idx].weeklyTarget;
+        targets.monthlyTarget = m.bot.categories[idx].monthlyTarget;
+        item['target_' + name] = targets;
+      }
+      return item;
     },
     performUpdate(awscredentials, botName, region) {
       this.updateCharts(awscredentials, botName, region);
@@ -296,7 +314,7 @@ export default {
           (error, data) => {
             if (error) {
               /* eslint-disable no-console */
-              console.error('dynamodb error:', error.message);
+              Logger.error('dynamodb error:', error.message);
               reject(`dynamodb error: ${error.message}`);
             }
             resolve(data);
@@ -304,7 +322,134 @@ export default {
         );
       });
     },
-    getReportedDetailData(awscredentials, botName, awsregion, fromDateMoment, toDateMoment) {
+    batchWriteItems(awscredentials, awsregion, botName, tableName, items) {
+      return new Promise((resolve, reject) => {
+        const docClient = new DynamoDb.DocumentClient({
+          region: awsregion,
+          credentials: awscredentials,
+        });
+        const putItems = [];
+        for (let i = 0; i < items.length; i++) {
+          putItems[i] = {
+            PutRequest: {
+              Item: items[i].Item,
+            },
+          };
+        }
+        Logger.debug('putItems is: ' + JSON.stringify(putItems, null, 2));
+        const params = {
+          ReturnConsumedCapacity: 'NONE',
+          ReturnItemCollectionMetrics: 'NONE',
+          RequestItems: {},
+        };
+        Logger.debug('tablename is ' + tableName);
+        const name = `${botName}-${tableName}`;
+        params.RequestItems[name] = putItems;
+        Logger.debug('batch write params is: ' + JSON.stringify(params, null, 2));
+        Logger.debug('starting batchWrite');
+        docClient.batchWrite(params, (err, res) => {
+          if (err) {
+            Logger.error('Error putting data: ' + err, err.stack);
+            reject(err);
+          } else {
+            Logger.debug('Successfully put data');
+            resolve(res);
+          }
+        });
+      });
+    },
+    batchDeleteRawItems(awscredentials, botName, awsregion, data) {
+      Logger.debug('batch delete of : ' + JSON.stringify(data, null, 2));
+      return new Promise((resolve, reject) => {
+        const docClient = new DynamoDb.DocumentClient({
+          region: awsregion,
+          credentials: awscredentials,
+        });
+        const uid = localStorage.getItem('cognitoid');
+        const objsToDelete = [];
+        for (let i = 0; i < data.Count; i++) {
+          objsToDelete[i] = {
+            DeleteRequest: {
+              Key: { /* required */
+                userId: uid,
+                reported_time: data.Items[i].reported_time,
+              },
+            },
+          };
+        }
+        const tableName = `${botName}-Raw`;
+        const params = {
+          ReturnConsumedCapacity: 'NONE',
+          ReturnItemCollectionMetrics: 'NONE',
+        };
+        params.RequestItems[tableName] = objsToDelete;
+        docClient.batchWrite(params, (err, res) => {
+          if (err) {
+            Logger.error('Error deleting data: ' + err, err.stack);
+            reject(err);
+          } else {
+            Logger.debug('Successfully deleted data');
+            resolve(res);
+          }
+        });
+      });
+    },
+    updateReportedData(awscredentials, botName, awsregion, forThisDate, category, value) {
+      return new Promise((resolve) => {
+        this.getReportedDetailData(awscredentials, botName, awsregion, forThisDate, forThisDate, category)
+          .then((detaildata) => {
+            this.getReportedData(awscredentials, botName, awsregion, forThisDate, forThisDate)
+              .then((data) => {
+                let item = {};
+                if (data.Items.length === 0) {
+                  item = this.defaultItem(model, forThisDate);
+                } else {
+                  item = data.Items[0];
+                }
+                item[category] = value;
+                const params = {
+                  TableName: `${botName}-Aggregate`,
+                  Item: item,
+                };
+                let paramsRaw = {};
+                if (detaildata.Items.length === 0) {
+                  paramsRaw = {
+                    TableName: `${botName}-Raw`,
+                    Item: {
+                      userId: localStorage.getItem('cognitoid'),
+                      reported_time: new Date().toISOString(),
+                      dayPrefix: forThisDate.format('YYYY-MM-DD'),
+                      intentName: category + botName,
+                      rawObject: category,
+                      rawUnits: 'steps',
+                      rawValue: value,
+                    },
+                  };
+                } else {
+                  paramsRaw = {
+                    TableName: `${botName}-Raw`,
+                    Item: {
+                      userId: localStorage.getItem('cognitoid'),
+                      reported_time: detaildata.Items[0].reported_time,
+                      dayPrefix: forThisDate.format('YYYY-MM-DD'),
+                      intentName: category + botName,
+                      rawObject: category,
+                      rawUnits: 'steps',
+                      rawValue: value,
+                    },
+                  };
+                }
+                Logger.debug('params raw is : ' + JSON.stringify(paramsRaw, null, 2));
+                const res = {
+                  aggregate: params,
+                  raw: paramsRaw,
+                };
+                resolve(res);
+              });
+          });
+      });
+    },
+    getReportedDetailData(awscredentials, botName, awsregion, fromDateMoment, toDateMoment, category) {
       const toDateMomentCalc = moment().utc().add(1, 'days');
       if (!fromDateMoment.isValid() || !toDateMoment.isValid()) {
         return Promise.reject(`invalid date: ${fromDateMoment} ${toDateMoment}`);
@@ -324,7 +469,7 @@ export default {
         },
         ExpressionAttributeValues: {
           ':userid': userId,
-          ':category': this.category,
+          ':category': category,
           ':start_day': fromDateMoment.format('YYYY-MM-DD'),
           ':end_day': toDateMomentCalc.format('YYYY-MM-DD'),
         },
@@ -335,8 +480,8 @@ export default {
           params,
           (error, data) => {
             if (error) {
-              /* eslint-disable no-console */
-              console.error('dynamodb error:', error.message);
+              /* eslint-disable */
+              Logger.error('dynamodb error:', error.message);
               reject(`dynamodb error: ${error.message}`);
             }
             resolve(data);

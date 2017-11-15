@@ -25,7 +25,7 @@ License for the specific language governing permissions and limitations under th
 
 
 <script>
-/* eslint-disable no-console, prefer-arrow-callback, no-var, no-use-before-define
+/* eslint-disable prefer-arrow-callback, no-var, no-use-before-define */
 /* eslint-disable prefer-template, no-use-before-define, prefer-template */
 /* eslint-disable no-undef, comma-dangle, no-multi-spaces, no-unused-vars, space-before-blocks */
 /* eslint-disable no-unsafe-negation, no-shadow, no-extra-semi, eqeqeq, quotes */
@@ -41,6 +41,7 @@ import { Plugin as LexWebUi, Store as LexWebUiStore } from 'aws-lex-web-ui';
 import Report from './components/Report';
 import UserProfile from './components/UserProfile';
 import model from './assets/TrackingBotModel.json';
+import Logger from './logger';
 
 Vue.use(Vuetify);
 Vue.use(Vuex);
@@ -96,23 +97,23 @@ export default {
   beforeCreate() {
   },
   mounted() {
-    console.log('awsconfig pass as properties: ' + JSON.stringify(this.awsconfig, null, 2));
-    console.log('region', this.awsconfig.region);
+    Logger.debug('awsconfig pass as properties: ' + JSON.stringify(this.awsconfig, null, 2));
+    Logger.debug('region', this.awsconfig.region);
     const child = this.$refs.report;
     child.setCredentials(this.awsconfig.credentials);
     child.performUpdate(this.awsconfig.credentials, config.lex.botName, region);
-    console.info('App Vue Mounted');
+    Logger.info('App Vue Mounted');
   },
   methods: {
     onUpdateLexState(lexState) {
-      console.log('handle update: ' + JSON.stringify(lexState, null, 2));
+      Logger.debug('handle update: ' + JSON.stringify(lexState, null, 2));
       if (lexState.dialogState === 'Fulfilled') {
         const child = this.$refs.report;
         child.performUpdate(this.awsconfig.credentials, config.lex.botName, region);
       }
     },
     logout () {
-      console.log('logout');
+      Logger.debug('logout');
       window.location.href = 'index.html?dosignout';
     }
   },

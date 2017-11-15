@@ -11,9 +11,6 @@ const noauth = localStorage.getItem('noauth');
 const rd1 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedin=yes';
 const rd2 = window.location.protocol + '//' + window.location.hostname + '/index.html?loggedout=yes';
 
-console.log('rd1 is: ' + rd1);
-console.log('rd2 is: ' + rd2);
-
 const authData = {
   ClientId: appUserPoolClientId, // Your client id here
   AppWebDomain: appDomainName,
@@ -38,11 +35,11 @@ function logout() {
 }
 
 auth.userhandler = {
-  onSuccess: function (result) {
-    console.log('Sign in success: ' + JSON.stringify(result, null, 2));
+  onSuccess: function () {
+    console.debug('Sign in success');
   },
   onFailure: function (err) {
-    console.log('Sign in failure: ' + JSON.stringify(err, null, 2));
+    console.debug('Sign in failure: ' + JSON.stringify(err, null, 2));
   },
 };
 
@@ -52,7 +49,7 @@ if (curUrl.indexOf('home') >= 0) {
   if (token === null || token === undefined) {
     auth.getSession();
   } else {
-    console.log('goto home');
+    console.debug('goto home');
     const session = auth.getSignInUserSession();
     if (!session.isValid()) {
       auth.getSession();
@@ -74,12 +71,12 @@ if (curUrl.indexOf('home') >= 0) {
     localStorage.setItem('poolname', appUserPoolName);
     window.location.href = 'index.html?home';
   } catch (reason) {
-    console.log('failed to parse response: ' + reason);
-    console.log('url was: ' + minurl);
+    console.debug('failed to parse response: ' + reason);
+    console.debug('url was: ' + minurl);
     window.location.href = 'index.html';
-  };
+  }
 } else if (curUrl.indexOf('loggedout') >= 0) {
-  console.log('logout complete');
+  console.debug('logout complete');
   localStorage.removeItem('noauth');
   localStorage.removeItem('idtokenjwt');
   localStorage.removeItem('cognitoid');
@@ -96,3 +93,4 @@ if (curUrl.indexOf('home') >= 0) {
 } else {
   window.location.href = '/static/indexentry.html';
 }
+

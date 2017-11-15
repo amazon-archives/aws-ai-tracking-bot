@@ -16,13 +16,14 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 
-/* eslint-disable no-new, no-console, no-unused-vars, prefer-template, prefer-arrow-callback, func-names, no-else-return */
+/* eslint-disable no-new, no-unused-vars, prefer-template, prefer-arrow-callback, func-names, no-else-return */
 
 import Vue from 'vue';
 import { VTooltip } from 'v-tooltip';
 import VueCookies from 'vue-cookies';
 import AWS from 'aws-sdk';
 import App from './App';
+import Logger from './logger';
 
 Vue.config.productionTip = false;
 Vue.directive('my-tooltip', VTooltip);
@@ -37,7 +38,8 @@ const idtoken = localStorage.getItem('idtokenjwt');
 const poolName = localStorage.getItem('poolname');
 const noauth = localStorage.getItem('noauth');
 
-console.log('idtoken is: ' + idtoken);
+Logger.debug('idtoken is: ' + idtoken);
+
 /**
  * Initializes credentials
  */
@@ -74,6 +76,6 @@ credentials.getPromise().then(function () {
     },
   });
 }, function (err) {
-  console.log('err: ' + err);
+  Logger.error('err: ' + err);
 });
 
