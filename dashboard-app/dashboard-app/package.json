@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "potterve <potterve@amazon.com>",
-  "license": "Amazon Software License",
+  "license": "MIT-0",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
