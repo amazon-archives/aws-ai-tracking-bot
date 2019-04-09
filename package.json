@@ -2,7 +2,7 @@
   "name": "tracking-bot",
   "version": "1.0.0",
   "description": "a tracking bot example",
-  "license": "Amazon Software License",
+  "license": "MIT-0",
   "main": "masterBuild.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
